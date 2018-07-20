@@ -1,0 +1,118 @@
+<resources>
+
+
+
+
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
+    <style name="RadioBtn">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:button">@null</item>
+        <item name="android:background">@color/trans</item>
+        <item name="android:drawablePadding">3dp</item>
+        <item name="android:gravity">center|bottom</item>
+        <item name="android:paddingBottom">5dp</item>
+        <item name="android:paddingTop">5dp</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:textColor">@color/color_radio1</item>
+    </style>
+
+    <declare-styleable name="RoundImageView">
+        <attr name="rect_adius" format="float" />
+    </declare-styleable>
+
+    <style name="FragMain1MyTabLayoutTextAppearance" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
+        <item name="android:textSize">15sp</item>
+    </style>
+    <style name="FragMain3MyTabLayoutTextAppearance" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
+        <item name="android:textSize">17sp</item>
+    </style>
+
+
+    <style name="ActionSheetDialogAnimation" parent="@android:style/Animation.Dialog">
+        <item name="android:windowEnterAnimation">@anim/pop0_from_bottom</item>
+        <item name="android:windowExitAnimation">@anim/pop1_from_bottom</item>
+    </style>
+
+    <declare-styleable name="MyImageView">
+        <attr name="ratio" format="float" />
+    </declare-styleable>
+
+    <style name="RadioBtn_splash">
+        <item name="android:layout_width">7dp</item>
+        <item name="android:layout_height">7dp</item>
+        <item name="android:layout_marginLeft">3dp</item>
+        <item name="android:layout_marginRight">3dp</item>
+        <item name="android:button">@null</item>
+        <item name="android:background">@drawable/radio_splash</item>
+    </style>
+
+    <style name="RedBgNoIndicatorTabLayout" parent="android:Widget">
+        <item name="tabBackground">@drawable/tab_background</item>
+        <item name="tabIndicatorColor">#00000000</item>
+        <item name="tabIndicatorHeight">0dp</item>
+    </style>
+
+    <style name="NormalIndicatorTabLayout" parent="android:Widget">
+        <item name="tabBackground">@color/white</item>
+        <item name="tabIndicatorColor">#00000000</item>
+        <item name="tabIndicatorHeight">0dp</item>
+    </style>
+
+
+
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+    <style name="AppTheme.Full" parent="AppTheme.NoActionBar">
+        <item name="android:windowFullscreen">true</item>
+    </style>
+
+    <!--自定义布局的dialog-->
+    <style name="QuestionCompleteAnswerDialog" parent="android:style/Theme.Dialog">
+        <!--<item name="android:windowFullscreen">true</item>-->
+        <!-- 背景颜色及透明程度 -->
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <!-- 是否有标题 -->
+        <item name="android:windowNoTitle">true</item>
+        <!-- 是否浮现在activity之上,会造成macth_parent失效-->
+        <item name="android:windowIsFloating">false</item>
+        <!-- 是否模糊 -->
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:windowFrame">@null</item>
+        <!--设置状态栏颜色-->
+        <item name="colorPrimaryDark">@android:color/transparent</item>
+    </style>
+
+
+
+    <!--确认对话框-->
+    <style name="AppUpdateConfirmDialog" >
+        <!--Dialog的windowFrame框为无-->
+        <item name="android:windowFrame">@null</item>
+        <!--是否浮现在activity之上-->
+        <item name="android:windowIsFloating">true</item>
+        <!--是否半透明-->
+        <item name="android:windowIsTranslucent">true</item>
+        <!--是否显示title-->
+        <item name="android:windowNoTitle">true</item>
+        <!--就是用来控制灰度的值，当为1时，界面除了我们的dialog内容是高亮显示的，dialog以外的区域是黑色的，完全看不到其他内容，系统的默认值是0.5-->
+        <item name="android:backgroundDimAmount">0.5</item>
+        <!--显示区域以外是否使用黑色半透明背景-->
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:windowBackground">@drawable/app_update_shape_custom_dialog</item>
+    </style>
+
+</resources>

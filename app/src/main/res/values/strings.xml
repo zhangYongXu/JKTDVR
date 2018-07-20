@@ -1,0 +1,114 @@
+<resources>
+    <string name="app_name">极客天地VR</string>
+
+
+    <string name="main_radio0">首页</string>
+    <string name="main_radio1">VR图</string>
+    <string name="main_radio2">VR视频</string>
+    <string name="main_radio3">制作VR</string>
+    <string name="main_radio4">我的</string>
+
+    <string name="app_main_page0_top_title">极客天地VR</string>
+    <string name="app_main_page1_top_title">VR图</string>
+    <string name="app_main_page2_top_title">VR视频</string>
+    <string name="app_main_page3_top_title">制作VR</string>
+    <string name="app_main_page4_top_title">我的</string>
+
+    <string name="unLogin">未登录/注册</string>
+    <string name="exitLogin">退出登录</string>
+
+
+    <string name="page4_person_info">个人信息</string>
+    <string name="page4_my_collection">我的VR</string>
+    <string name="page4_my_reading_log">阅读记录</string>
+    <string name="page4_my_question">已答问卷</string>
+    <string name="page4_settings">设置</string>
+
+    <string name="set_item_check_version">版本检测</string>
+    <string name="set_item_about">关于我们</string>
+    <string name="set_item_aticle_font">文章字体大小</string>
+
+
+    <string name="share_to">分享至</string>
+    <string name="share_unInstall_wx">未安装微信</string>
+    <string name="share_unInstall_qq">未安装QQ</string>
+
+    <string name="unknown">未获取到信息</string>
+
+    <string name="hint_click">点击设置</string>
+    <string name="hint_input">点击输入</string>
+
+    <string name="person_info_item_title_phone">手机号</string>
+    <string name="person_info_item_title_nickname">昵称</string>
+    <string name="person_info_item_title_email">邮箱</string>
+    <string name="person_info_item_title_position">单位</string>
+    <string name="person_info_item_title_sex">性别</string>
+
+
+
+    <string name="login">登录</string>
+    <string name="register">注册</string>
+
+    <string name="hint_phone">手机号</string>
+    <string name="hint_pass">密码为六到十六位字符，数字或字母</string>
+    <string name="hint_code">短信验证码</string>
+    <string name="hint_getCode">获取验证码</string>
+    <string name="hint_codeRe">重新获取</string>
+
+
+    <string name="submit">提交</string>
+    <string name="skip">跳过</string>
+    <string name="agreed">已同意</string>
+    <string name="next">下一步</string>
+    <string name="complete">完成</string>
+    <string name="login_register">注册账号</string>
+    <string name="login_forgetPass">忘记密码？</string>
+    <string name="login_phone_register">手机注册</string>
+    <string name="login_three">第三方账号直接登录</string>
+    <string name="login_clause"><u>用户协议</u></string>
+    <string name="login_clause2">用户协议</string>
+    <string name="login_secret"><u>隐私保护</u></string>
+    <string name="login_secret2">隐私保护</string>
+    <string name="login_bind">绑定手机号</string>
+    <string name="login_binded">该手机号在系统中已注册过，可直接关联手机号</string>
+
+    <string name="forgot_pass_phone">请输入手机号</string>
+    <string name="forgot_pass_pass0">输入密码</string>
+    <string name="forgot_pass_pass1">确认密码</string>
+    <string name="forgot_pass_title0">忘记密码</string>
+    <string name="forgot_pass_title1">设置密码</string>
+
+    <string name="toast_phone">请输入手机号</string>
+    <string name="toast_pass">请输入密码</string>
+    <string name="toast_verify">密码输入不一致</string>
+    <string name="toast_code">请获取验证码</string>
+    <string name="toast_phone_v">请输入正确的手机号</string>
+
+
+    <string name="search">搜索</string>
+    <string name="search_empty">未找到相关内容</string>
+    <string name="search_history">历史记录</string>
+
+    <string name="choice_picture">选择照片</string>
+    <string name="headIcon_title">头像设置</string>
+    <string name="completeInfo">请完善信息</string>
+    <string name="person_info_save">保存修改</string>
+
+    <string name="unlogin_tip_message">请先登录</string>
+
+    <string name="common_show_item_title_scroe">积分</string>
+    <string name="common_show_item_scan_scroe">浏览</string>
+    <string name="common_show_item_time_scroe">时间</string>
+
+    <string name="common_test_string_title">标题</string>
+    <string name="common_test_string_content">内容内容内容内容内容内容内容</string>
+    <string name="common_test_string_time">2018-09-09</string>
+    <string name="common_test_string_from">新闻</string>
+    <string name="common_test_string_scan">浏览 23</string>
+    <string name="common_test_string_score">积分 21</string>
+    <string name="common_test_string_author">作者:wang</string>
+    <string name="common_test_string_mudule_name"></string>
+
+
+    <string name="question_stop_answrer_tip">是否确认退出答题？</string>
+</resources>

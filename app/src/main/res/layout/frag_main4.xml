@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <LinearLayout
+        android:id="@+id/title_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@color/AppNavigationViewColor">
+
+        <RelativeLayout
+            android:id="@+id/navigationTopStatueBgViewLayout"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/appTopNavigationViewStatusBgHeight"
+            android:background="@color/AppNavigationStatusViewColor">
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/appTopNavigationViewRealHeight">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:textSize="@dimen/textSize18"
+                android:textStyle="bold"
+                android:textColor="@color/AppNavigationTitleColor"
+                android:text="@string/app_main_page4_top_title"/>
+
+
+        </RelativeLayout>
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/main_page4_personInfo"
+        android:layout_width="match_parent"
+        android:layout_height="110dp"
+        android:background="@color/appStyleColor"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <com.geeksworld.jktdvr.views.RoundImageView
+            android:id="@+id/main_page4_head"
+            android:layout_width="67dp"
+            android:layout_height="67dp"
+            android:layout_marginLeft="20dp"
+            android:background="@mipmap/mine_head_default"
+            android:scaleType="centerCrop" />
+
+        <TextView
+            android:id="@+id/main_page4_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:layout_weight="1"
+            android:text="@string/unLogin"
+            android:textColor="@color/white"
+            android:textSize="@dimen/textSize16" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="15dp"
+            android:layout_gravity="right"
+            android:src="@mipmap/mine_right_skip"
+            android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/scoreTextView"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="15dp"
+            android:text="@string/common_test_string_score"
+            android:textColor="@color/white"
+            android:visibility="gone"/>
+
+    </LinearLayout>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:background="@color/AppPageCommonBgColor"/>
+    <RelativeLayout
+        android:id="@+id/main_page4_person_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="15dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:drawableLeft="@mipmap/mine_item_person_info"
+            android:drawablePadding="10dp"
+            android:gravity="center"
+            android:text="@string/page4_person_info" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:drawablePadding="10dp"
+            android:drawableRight="@mipmap/main_page4_right" />
+    </RelativeLayout>
+
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="@color/gray_ling" />
+
+    <RelativeLayout
+        android:id="@+id/main_page4_my_collection"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="15dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:drawableLeft="@mipmap/mine_item_my_collection"
+            android:drawablePadding="10dp"
+            android:gravity="center"
+            android:text="@string/page4_my_collection" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:drawablePadding="10dp"
+            android:drawableRight="@mipmap/main_page4_right"
+            android:gravity="center" />
+    </RelativeLayout>
+
+
+
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="@color/gray_ling" />
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:background="@color/AppPageCommonBgColor"/>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="@color/gray_ling" />
+
+
+    <RelativeLayout
+        android:id="@+id/main_page4_settings"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="15dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:drawableLeft="@mipmap/mine_item_setting"
+            android:drawablePadding="10dp"
+            android:gravity="center"
+            android:text="@string/page4_settings" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:drawablePadding="10dp"
+            android:drawableRight="@mipmap/main_page4_right" />
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="@color/gray_ling" />
+
+
+</LinearLayout>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/appStyleColor"
+        android:orientation="vertical">
+        <RelativeLayout
+            android:id="@+id/navigationTopStatueBgViewLayout"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/appTopNavigationViewStatusBgHeight"
+            android:background="@color/appStyleColor">
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/appTopNavigationViewRealHeight">
+
+            <ImageView
+                android:id="@+id/title_back"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
+                android:paddingBottom="5dp"
+                android:paddingTop="5dp"
+                android:layout_centerVertical="true"
+                android:src="@mipmap/back_trans_white" />
+
+            <EditText
+                android:id="@+id/title_name"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_toRightOf="@id/title_back"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="15dp"
+                android:background="@mipmap/searchbg"
+                android:drawableLeft="@mipmap/search_gray"
+                android:drawablePadding="10dp"
+                android:paddingLeft="10dp"
+                android:imeActionLabel="@string/search"
+                android:imeOptions="actionSearch"
+                android:inputType="text"
+                android:lines="1"
+                android:textColor="@color/black"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/title_right"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:padding="5dp"
+                android:text="大"
+                android:textColor="@color/white"
+                android:textSize="15sp"
+                android:visibility="invisible" />
+        </RelativeLayout>
+    </LinearLayout>
+
+
+</LinearLayout>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#c34944</color>
+    <!--<color name="colorPrimary">#ec3e2f</color>-->
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+
+    <color name="colorGoodGreen">#38d9c2</color>
+
+    <color name="trans">#01ffffff</color>
+    <color name="trans_gray">#55888888</color>
+    <color name="trans_white">#55F9F9F9</color>
+    <color name="trans_white2">#55FFFFFF</color>
+    <color name="white">#FFFFFF</color>
+    <color name="black">#FF000000</color>
+    <color name="red">#FFDC3F31</color>
+
+    <color name="text_normal">#FF818181</color>
+    <color name="text_checked">#FF010102</color>
+    <color name="gray_search_bg">#FFDDDDDD</color>
+    <color name="gray_ling">#FFCECECE</color>
+    <color name="gray_page3_radiobg">#FF666666</color>
+    <color name="grow_line_color">#FF5898D3</color>
+    <color name="search_main">#FFEAA02D</color>
+    <color name="login_clause">#aba7a2</color>
+
+    <color name="appStyleColor">#c34944</color>
+    <!--<color name="appStyleColor">#ec3e2f</color>-->
+    <color name="AppPageCommonBgColor">#E8E8E8</color>
+    <color name="AppNavigationViewColor">#80ebebeb</color>
+    <color name="AppNavigationStatusViewColor">#80888888</color>
+    <color name="AppNavigationTitleColor">#070707</color>
+
+
+    <color name="frag_main3_text_color1">#eb6c7a</color>
+
+    <color name="black5e">#5e5e5d</color>
+    <color name="black33">#333333</color>
+    <color name="black66">#666666</color>
+    <color name="black99">#999999</color>
+    <color name="gray2">#f7868686</color>
+    <color name="gray3">#cccccc</color>
+    <color name="gray4">#999999</color>
+
+    <color name="frag_main0_item_title_color">@color/black33</color>
+
+    <color name="frag_main0_item_bottom_color">@color/black99</color>
+
+    <color name="frag_main0_item_divide_color">#cecece</color>
+    <color name="home_activity_agree_btn_title_color">#3292fd</color>
+
+
+    <color name="Question_not_answer_bg_color">@color/appStyleColor</color>
+    <color name="Question_has_answer_bg_color">#80333333</color>
+
+    <color name="wheel_line_border">#C7C7C7</color>
+
+    <color name="transparent">#000000</color>
+
+    <color name="question_dialog_bg_color">#e6c44944</color>
+
+    <color name="eduNumGreen">#73C81E</color>
+</resources>

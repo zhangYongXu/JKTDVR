@@ -103,7 +103,7 @@ public class Frag_main2 extends BaseFragment{
     }
     private void loadData() {
 
-        homeViewModel.postRequestTagDataListData(homeTagModel,"",HomeItemModel.HomeItemModelContentTypeVideo, new BaseViewModel.OnRequestDataComplete<HomeTagModel>() {
+        homeViewModel.postRequestTagDataListData(false,homeTagModel,"",HomeItemModel.HomeItemModelContentTypeVideo, new BaseViewModel.OnRequestDataComplete<HomeTagModel>() {
             @Override
             public void success(HomeTagModel publishTagModel) {
                 itemAdapter.notifyDataSetChanged();

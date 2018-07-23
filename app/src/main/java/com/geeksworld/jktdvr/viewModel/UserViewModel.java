@@ -42,20 +42,19 @@ public class UserViewModel extends BaseViewModel {
         String phone = share.getString(ShareKey.PHONE,"");
         String nick = share.getString(ShareKey.NICK,"");
         String email = share.getString(ShareKey.EMAIL,"");
-        String company = share.getString(ShareKey.COMPANY,"");
+        String birth = share.getString(ShareKey.BIRTH,"");
         String img_url = share.getString(ShareKey.IMG_URL,"");
-        int sex = share.getInt(ShareKey.SEX,0);
+        String sex = share.getString(ShareKey.SEX,"");
         int point = share.getInt(ShareKey.POINT,0);
 
-        currentUserModel.setU_id(u_id);
+        currentUserModel.setId(u_id);
         currentUserModel.setPassword(pass);
         currentUserModel.setPhone(phone);
         currentUserModel.setNick_name(nick);
         currentUserModel.setEmail(email);
-        currentUserModel.setCompany(company);
+        currentUserModel.setBirth(birth);
         currentUserModel.setImg_url(img_url);
         currentUserModel.setSex(sex);
-        currentUserModel.setPoint(point);
     }
 
     public String getCurrentValidateCode() {
@@ -82,6 +81,14 @@ public class UserViewModel extends BaseViewModel {
         HashMap<String, Object> map = new HashMap<>();
         map.put("phoneNumber", phoneNumber);
 
+        int numcode = (int) ((Math.random() * 9 + 1) * 100000);
+        currentValidateCode = numcode+"";
+
+
+        if(null != complete){
+            complete.success(currentValidateCode);
+        }
+        /*
         HttpUtil.requestPostNetWork(Url.sendPhoneVerifyCode, Tool.getParams(getActivity(), map), new HttpUtil.OnNetWorkResponse() {
             @Override
             public void downsuccess(String result) {
@@ -90,7 +97,7 @@ public class UserViewModel extends BaseViewModel {
                     int code = obj.getInt("code");
                     String message = obj.getString("message");
                     if (code == 1) {
-                        String validateCode = obj.getJSONObject("result").getString("validateCode");
+                        String validateCode = obj.getJSONObject("data").getString("validateCode");
                         currentValidateCode = validateCode;
                         if(null != complete){
                             complete.success(validateCode);
@@ -116,13 +123,22 @@ public class UserViewModel extends BaseViewModel {
                 }
             }
         });
+        */
     }
 
+    /*
+    * user_name（用户名称）
+sex（性别）(男女)
+birth（出生）
+tel（手机号）
+email（邮箱号）
+    * */
     //请求用户注册
     public void postRequestRegisterUser(final UserModel userModel,final OnRequestDataComplete<UserModel> complete){
         HashMap<String, Object> map = new HashMap<>();
-        map.put("phoneNumber", userModel.getPhone());
-        map.put("password", userModel.getPassword());
+        map.put("id", "0");
+        map.put("tel", userModel.getPhone());
+        map.put("user_pwd", userModel.getPassword());
         map.put("validateCode", userModel.getValidateCode());
 
         HttpUtil.requestPostNetWork(Url.registUser, Tool.getParams(getActivity(), map), new HttpUtil.OnNetWorkResponse() {
@@ -133,9 +149,10 @@ public class UserViewModel extends BaseViewModel {
                     int code = obj.getInt("code");
                     String message = obj.getString("message");
                     if (code == 1) {
-                        JSONObject result1 = obj.getJSONObject("result");
-                        String uid = result1.getString("u_id");
-                        userModel.setU_id(Integer.parseInt(uid));
+                        /*
+                        JSONObject result1 = obj.getJSONObject("data");
+                        String uid = result1.getString("id");
+                        userModel.setId(Integer.parseInt(uid));
                         SharedPreferences.Editor edit = share.edit();
                         if (!Tool.isNull(uid)) {
                             edit.putInt(ShareKey.UID, Integer.valueOf(uid));
@@ -146,7 +163,7 @@ public class UserViewModel extends BaseViewModel {
                         edit.putString(ShareKey.PHONE, userModel.getPhone());
                         edit.putBoolean(ShareKey.ISLOGIN, true);
                         edit.commit();
-
+                        */
                         if(null != complete){
                             currentUserModel = userModel;
                             complete.success(userModel);
@@ -178,8 +195,8 @@ public class UserViewModel extends BaseViewModel {
     //请求用户登录
     public void postRequestUserLogin(final UserModel userModel,final OnRequestDataComplete<UserModel> complete) {
         HashMap<String, Object> map = new HashMap<>();
-        map.put("phoneNumber", userModel.getPhone());
-        map.put("password", userModel.getPassword());
+        map.put("user_name", userModel.getPhone());
+        map.put("user_pwd", userModel.getPassword());
 
         HttpUtil.requestPostNetWork(Url.login, Tool.getParams(getActivity(), map), new HttpUtil.OnNetWorkResponse() {
             @Override
@@ -189,9 +206,9 @@ public class UserViewModel extends BaseViewModel {
                     int code = obj.getInt("code");
                     String message = obj.getString("message");
                     if (code == 1) {
-                        JSONObject result1 = obj.getJSONObject("result");
-                        String uid = result1.getString("u_id");
-
+                        JSONObject result1 = obj.getJSONObject("data");
+                        String uid = result1.getString("id");
+                        userModel.setId(Integer.parseInt(uid));
                         SharedPreferences.Editor edit = share.edit();
 
                         if (!Tool.isNull(uid)) {
@@ -235,7 +252,7 @@ public class UserViewModel extends BaseViewModel {
     //请求获取用户信息
     public void postRequestUserInfo(final String uid,final OnRequestDataComplete<UserModel> complete) {
         HashMap<String, Object> map = new HashMap<>();
-        map.put("u_id", uid );
+        map.put("id", uid );
         HttpUtil.requestPostNetWork(Url.displayUserDetails, Tool.getParams(getActivity(), map), new HttpUtil.OnNetWorkResponse() {
             @Override
             public void downsuccess(String result) {
@@ -244,19 +261,19 @@ public class UserViewModel extends BaseViewModel {
                     int code = obj.getInt("code");
                     String message = obj.getString("message");
                     if (code == 1) {
-                        JSONObject result1 = obj.getJSONObject("result");
+                        JSONObject result1 = obj.getJSONObject("data");
                         String user_name = result1.getString("user_name");
                         UserModel userModel = JSONArray.parseObject(result1.toString(), UserModel.class);
                         String jsonString = JSON.toJSONString(userModel, SerializerFeature.PrettyFormat,
                                 SerializerFeature.WriteNullStringAsEmpty, SerializerFeature.WriteNullNumberAsZero);
 
-                        share.edit().putString(ShareKey.PHONE, user_name).commit();
+                        share.edit().putString(ShareKey.PHONE, userModel.getPhone()).commit();
+                        share.edit().putString(ShareKey.BIRTH, userModel.getBirth()).commit();
+                        share.edit().putString(ShareKey.TEL, userModel.getTel()).commit();
                         share.edit().putString(ShareKey.NICK, userModel.getNick_name()).commit();
                         share.edit().putString(ShareKey.EMAIL, userModel.getEmail()).commit();
-                        share.edit().putString(ShareKey.WORK_POSITION, userModel.getCompany()).commit();
-                        share.edit().putInt(ShareKey.SEX, Integer.valueOf(userModel.getSex())).commit();
+                        share.edit().putString(ShareKey.SEX, userModel.getSex()).commit();
                         share.edit().putString(ShareKey.IMG_URL, userModel.getImg_url()).commit();
-                        share.edit().putInt(ShareKey.POINT, Integer.valueOf(userModel.getPoint())).commit();
                         if(null != complete){
                             currentUserModel = userModel;
                             complete.success(userModel);
@@ -283,12 +300,21 @@ public class UserViewModel extends BaseViewModel {
             }
         });
     }
+    /*
+    * 除了id，全部字符串
+id（用户id）(注册时候不用传，修改的时候传)
+user_name（用户名称）
+sex（性别）(男女)
+birth（出生）
+tel（手机号）
+email（邮箱号）
+    * */
     //请求修改用户信息
     public void postRequestUpdateUserInfo(final UserModel userModel,final OnRequestDataComplete<UserModel> complete) {
         HashMap<String, Object> map = new HashMap<>();
-        map.put("u_id", "" + userModel.getU_id());
-        map.put("nick_name", userModel.getNick_name());
-        map.put("company", userModel.getCompany());
+        map.put("id", "" + userModel.getId());
+        map.put("user_name", userModel.getNick_name());
+        map.put("birth", userModel.getBirth());
         map.put("sex", "" + userModel.getSex());
         map.put("email", userModel.getEmail());
         HttpUtil.requestPostNetWork(Url.completeUserDetails, Tool.getParams(getActivity(), map), new HttpUtil.OnNetWorkResponse() {
@@ -299,23 +325,13 @@ public class UserViewModel extends BaseViewModel {
                     int code = obj.getInt("code");
                     String message = obj.getString("message");
                     if (code == 1) {
-                        JSONObject result1 = obj.getJSONObject("result");
-                        String u_id = result1.getString("u_id");
 
                         SharedPreferences.Editor edit = share.edit();
-
-                        if (!Tool.isNull(u_id)) {
-                            edit.putInt(ShareKey.UID, Integer.valueOf(u_id));
-                            String deviceId = share.getString(ShareKey.DEVICEID, "");
-                            if (!Tool.isNull(deviceId))
-                                Common.offlinePush(getActivity(), Integer.valueOf(u_id), deviceId);
-                        }
-
 
                         edit.putString(ShareKey.NICK, userModel.getNick_name());
                         edit.putString(ShareKey.EMAIL, userModel.getEmail());
                         edit.putString(ShareKey.SEX, userModel.getSex()+"");
-                        edit.putString(ShareKey.COMPANY, userModel.getCompany()+"");
+                        edit.putString(ShareKey.BIRTH, userModel.getBirth()+"");
                         edit.commit();
                         if(null != complete){
                             currentUserModel = userModel;

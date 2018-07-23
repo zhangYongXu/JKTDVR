@@ -41,7 +41,7 @@
     <string name="person_info_item_title_phone">手机号</string>
     <string name="person_info_item_title_nickname">昵称</string>
     <string name="person_info_item_title_email">邮箱</string>
-    <string name="person_info_item_title_position">单位</string>
+    <string name="person_info_item_title_birthday">生日</string>
     <string name="person_info_item_title_sex">性别</string>
 
 

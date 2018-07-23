@@ -1,9 +1,13 @@
 package com.geeksworld.jktdvr.activity;
 
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.format.Time;
+import android.util.Log;
 import android.view.View;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioGroup;
@@ -20,11 +24,15 @@ import com.geeksworld.jktdvr.tools.ShareKey;
 import com.geeksworld.jktdvr.tools.Tool;
 import com.geeksworld.jktdvr.viewModel.UserViewModel;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  * Created by xhs on 2018/4/9.
  */
 
-public class PersonInfoActivity extends BaseActivity {
+public class PersonInfoActivity extends BaseActivity implements View.OnClickListener{
     static final int SexTypeMale = 1;
     static final int SexTypeFeMale = 2;
 
@@ -42,13 +50,18 @@ public class PersonInfoActivity extends BaseActivity {
     private EditText phoneEditText;
     private EditText nicknameEditText;
     private EditText emailEditText;
-    private EditText workPositonEditText;
+    private EditText birthdayEditText;
     private RadioGroup sexRadioGroup;
     private TextView subimtTextView;
     private int sexType;
     private TextView scoreTextView;
 
     private String phoneNumber;
+
+    private int selYear;
+    private int selmonth;
+    private int selDay;
+    private String  birthtimestamp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,7 +115,7 @@ public class PersonInfoActivity extends BaseActivity {
         phoneEditText.setText(phoneNumber);
         nicknameEditText = (EditText) findViewById(R.id.nickName);
         emailEditText = (EditText) findViewById(R.id.email);
-        workPositonEditText = (EditText) findViewById(R.id.position);
+        birthdayEditText = (EditText) findViewById(R.id.birthdayEditText);
         sexRadioGroup = (RadioGroup) findViewById(R.id.sexRadioGroup);
         sexRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -125,6 +138,9 @@ public class PersonInfoActivity extends BaseActivity {
         });
 
         scoreTextView = (TextView)findViewById(R.id.scoreTextView);
+
+        findViewById(R.id.birthdayEditText).setOnClickListener(this);
+        findViewById(R.id.birthdayLayout).setOnClickListener(this);
     }
 
 
@@ -137,10 +153,13 @@ public class PersonInfoActivity extends BaseActivity {
                     Glide.with(PersonInfoActivity.this).load(userModel.getImg_url()).into(headImageView);
                 nicknameEditText.setText(userModel.getNick_name());
                 nicknameTextView.setText(userModel.getNick_name());
-                scoreTextView.setText("积分:"+userModel.getPoint());
+
                 emailEditText.setText(userModel.getEmail());
-                workPositonEditText.setText(userModel.getCompany());
-                if(userModel.getSex() == 1){
+                birthdayEditText.setText(userModel.getBirth());
+                if(!Tool.isNull(userModel.getBirth())){
+                    birthtimestamp = getTimestamp(userModel.getBirth())+"";
+                }
+                if(userModel.getSex()!= null && userModel.getSex().equals("男")){
                     sexRadioGroup.check(R.id.sexRadioButtonMale);
                 }else {
                     sexRadioGroup.check(R.id.sexRadioButtonFemale);
@@ -157,8 +176,8 @@ public class PersonInfoActivity extends BaseActivity {
     private void updateData(){
         String nickStr = nicknameEditText.getText().toString().trim();
         String emailStr = emailEditText.getText().toString().trim();
-        String workStr = workPositonEditText.getText().toString().trim();
-        int sexStr = sexType;
+        String birthdayStr = birthtimestamp;
+        int sex = sexType;
         if (Tool.isNull(nickStr)) {
             Tool.toast(PersonInfoActivity.this, "请填写昵称");
             return;
@@ -166,8 +185,8 @@ public class PersonInfoActivity extends BaseActivity {
         if (Tool.isNull(emailStr)) {
             Tool.toast(PersonInfoActivity.this, "请填写邮箱");
             return;
-        } if (Tool.isNull(workStr)) {
-            Tool.toast(PersonInfoActivity.this, "请填写单位");
+        } if (Tool.isNull(birthdayStr)) {
+            Tool.toast(PersonInfoActivity.this, "请选择生日");
             return;
         }
         if (!(sexType == SexTypeMale || sexType == SexTypeFeMale)) {
@@ -176,11 +195,12 @@ public class PersonInfoActivity extends BaseActivity {
         }
 
         UserModel userModel = new UserModel();
-        userModel.setU_id(u_id);
+        userModel.setId(u_id);
         userModel.setNick_name(nickStr);
         userModel.setEmail(emailStr);
-        userModel.setCompany(workStr);
-        userModel.setSex(sexType);
+        userModel.setBirth(birthdayStr);
+        String sexStr = sexType == SexTypeMale? "男":"女";
+        userModel.setSex(sexStr);
         userViewModel.postRequestUpdateUserInfo(userModel, new BaseViewModel.OnRequestDataComplete<UserModel>() {
             @Override
             public void success(UserModel userModel) {
@@ -195,6 +215,56 @@ public class PersonInfoActivity extends BaseActivity {
         });
 
     }
+
+    @Override
+    public void onClick(View view) {
+        int id = view.getId();
+        switch (id){
+            case R.id.birthdayEditText:{
+                selectDate();
+            }
+            break;
+            case R.id.birthdayLayout:{
+                selectDate();
+            }
+            break;
+        }
+    }
+    private void selectDate(){
+        Time time = new Time("GMT+8");
+        time.setToNow();
+        int year = time.year;
+        int month = time.month;
+        int day = time.monthDay;
+        new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
+                selYear = i;
+                selmonth = i1;
+                selDay = i2;
+                String dateStr = selYear +"-" + selmonth + "-"+selDay;
+
+                long time = getTimestamp(dateStr);//时间戳
+                birthtimestamp = time+"";
+                Log.i("date:",i+","+i1+","+i2 + "t:"+time);
+                birthdayEditText.setText(dateStr);
+            }
+        },year,month,day).show();
+
+    }
+
+    private long getTimestamp(String birth){
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = new Date();
+        try{
+            date = dateFormat.parse(birth);
+        } catch(ParseException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return date.getTime();
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);

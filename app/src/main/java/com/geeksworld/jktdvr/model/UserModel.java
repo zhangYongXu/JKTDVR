@@ -1,31 +1,43 @@
 package com.geeksworld.jktdvr.model;
 
 import com.geeksworld.jktdvr.aBase.BaseModel;
+import com.geeksworld.jktdvr.tools.Tool;
 
 /**
  * Created by xhs on 2018/4/16.
  */
 
+/*
+* id（用户id）、
+* user_name（用户名称）、
+* sex（性别）
+* /birth（出生）
+* /tel（手机号）
+* /email（邮箱号）
+* /regist_time（注册时间）
+* */
+
 public class UserModel extends BaseModel {
-    private int u_id;// "2",
+    private int id;// "2",
     private String img_url;// "http://oy45jwxyl.bkt.clouddn.com/4",
     private String nick_name;// "李四",
     private String email;
-    private String company;
+    private String regist_time;
     private String phone;// "李四",
+    private String tel;
     private String user_name;// "李四",
+    private String birth;// "李四",
     private String password;
-    private int sex;// "2",//性别  1为男性，2为女性
-    private int point;
-    private int d_id;
+    private String sex;//
+
     private String validateCode;
 
-    public void setU_id(int u_id) {
-        this.u_id = u_id;
+    public void setId(int id) {
+        this.id = id;
     }
 
-    public int getU_id() {
-        return u_id;
+    public int getId() {
+        return id;
     }
 
     public void setImg_url(String img_url) {
@@ -41,6 +53,12 @@ public class UserModel extends BaseModel {
     }
 
     public String getNick_name() {
+        if(Tool.isNull(nick_name) && !Tool.isNull(user_name)){
+            return getUser_name();
+        }
+        if(Tool.isNull(nick_name) && Tool.isNull(user_name)){
+            return getPhone();
+        }
         return nick_name;
     }
 
@@ -52,12 +70,12 @@ public class UserModel extends BaseModel {
         return email;
     }
 
-    public void setCompany(String company) {
-        this.company = company;
+    public void setRegist_time(String regist_time) {
+        this.regist_time = regist_time;
     }
 
-    public String getCompany() {
-        return company;
+    public String getRegist_time() {
+        return regist_time;
     }
 
     public void setPhone(String phone) {
@@ -65,6 +83,9 @@ public class UserModel extends BaseModel {
     }
 
     public String getPhone() {
+        if(Tool.isNull(phone) && !Tool.isNull(tel)){
+            return tel;
+        }
         return phone;
     }
 
@@ -84,28 +105,20 @@ public class UserModel extends BaseModel {
         return password;
     }
 
-    public void setSex(int sex) {
+    public void setSex(String sex) {
         this.sex = sex;
     }
 
-    public int getSex() {
+    public String getSex() {
         return sex;
     }
 
-    public void setPoint(int point) {
-        this.point = point;
+    public void setTel(String tel) {
+        this.tel = tel;
     }
 
-    public int getPoint() {
-        return point;
-    }
-
-    public void setD_id(int d_id) {
-        this.d_id = d_id;
-    }
-
-    public int getD_id() {
-        return d_id;
+    public String getTel() {
+        return tel;
     }
 
     public void setValidateCode(String validateCode) {
@@ -114,5 +127,13 @@ public class UserModel extends BaseModel {
 
     public String getValidateCode() {
         return validateCode;
+    }
+
+    public void setBirth(String birth) {
+        this.birth = birth;
+    }
+
+    public String getBirth() {
+        return birth;
     }
 }

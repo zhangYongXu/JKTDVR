@@ -1,5 +1,6 @@
 package com.geeksworld.jktdvr.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
@@ -15,6 +16,8 @@ import android.widget.RelativeLayout;
 import com.geeksworld.jktdvr.R;
 import com.geeksworld.jktdvr.aBase.BaseViewModel;
 
+import com.geeksworld.jktdvr.activity.PageWebActivity;
+import com.geeksworld.jktdvr.activity.SearchActivity;
 import com.geeksworld.jktdvr.model.HomeItemModel;
 
 import com.geeksworld.jktdvr.model.HomeTagModel;
@@ -73,6 +76,16 @@ public class Frag_main0 extends BaseFragment {
 
         title_container = view.findViewById(R.id.title_container);
 
+        title_container.findViewById(R.id.frag_main_search).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent();
+                intent.setClass(getActivity(), SearchActivity.class);
+                startActivity(intent);
+            }
+        });
+
+
 
         RelativeLayout topStatusViewRelativeLayout = view.findViewById(R.id.navigationTopStatueBgViewLayout);
         Common.hasNotchHandleNavigationStatusBg(getContext(),topStatusViewRelativeLayout);
@@ -88,7 +101,7 @@ public class Frag_main0 extends BaseFragment {
         if(ShareKey.isUseTestData){
             initContent();
         }
-        homeViewModel.postRequestAllTagListData(new BaseViewModel.OnRequestDataComplete<List<HomeTagModel>>() {
+        homeViewModel.postRequestAllTagListData(true,new BaseViewModel.OnRequestDataComplete<List<HomeTagModel>>() {
             @Override
             public void success(List<HomeTagModel> publishTagModels) {
                 initContent();

@@ -5,7 +5,7 @@ package com.geeksworld.jktdvr.tools;
  */
 
 public class Url {
-    public static final String BASE_HOST = "http://192.168.1.7:8888/";
+    public static final String BASE_HOST = "http://59.110.227.15:8888/";
 
     //public static final String HOST = "http://192.168.0.108:8080/BigEduCrm/app/";
     public static final String HOST = BASE_HOST+"ap/";
@@ -15,7 +15,7 @@ public class Url {
     /*
     *1)注册 "phoneNumber":"18811470927",  "password":"123456"
     * */
-    public static final String registUser = HOST + "user/register"+URLSuffix;
+    public static final String registUser = HOST + "user/save"+URLSuffix;
 
     /*
     * 2)短信验证码发送 "phoneNumber":"18811470927" //手机号
@@ -63,12 +63,12 @@ public class Url {
     /*8)根据用户id获取用户详情信息
     *  "uid":3
     * */
-    public static final String displayUserDetails = HOST + "user/findUserDetailByUid" +URLSuffix;
+    public static final String displayUserDetails = HOST + "user/findById" +URLSuffix;
 
     /*9)完善用户详情或者修改
     *  "uid":3
     * */
-    public static final String completeUserDetails = HOST + "user/addUserDetail" + URLSuffix;
+    public static final String completeUserDetails = HOST + "user/save" + URLSuffix;
 
     /*9)修改用户头像
         *  "uid":3
@@ -76,6 +76,10 @@ public class Url {
     public static final String completeUserHeadImg = HOST + "user/updateUserHeadImg" +URLSuffix;
 
 
+    public static final String postfileUpload = HOST + "img/fileUpload" +URLSuffix;
+
+
+    public static final String postimgSave = HOST + "/img/save" +URLSuffix;
 
     /*9)获取首页数据
         *  "page":"1"//第几页

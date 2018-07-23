@@ -117,7 +117,7 @@ public class Frag_main1 extends BaseFragment{
     }
 
     private void loadData(){
-        homeViewModel.postRequestTagDataListData(homeTagModel,"",HomeItemModel.HomeItemModelContentTypePicture, new BaseViewModel.OnRequestDataComplete<HomeTagModel>() {
+        homeViewModel.postRequestTagDataListData(false,homeTagModel,"",HomeItemModel.HomeItemModelContentTypePicture, new BaseViewModel.OnRequestDataComplete<HomeTagModel>() {
             @Override
             public void success(HomeTagModel publishTagModel) {
                 itemAdapter.notifyDataSetChanged();

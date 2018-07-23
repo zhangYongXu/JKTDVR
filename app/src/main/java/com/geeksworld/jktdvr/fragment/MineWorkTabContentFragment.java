@@ -5,15 +5,16 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.geeksworld.jktdvr.R;
 import com.geeksworld.jktdvr.aBase.BaseViewModel;
-
 import com.geeksworld.jktdvr.activity.PageWebActivity;
 import com.geeksworld.jktdvr.adapter.RecyclerMainFrag0ViewItemAdapter;
+import com.geeksworld.jktdvr.adapter.RecyclerMineWorkViewItemAdapter;
 import com.geeksworld.jktdvr.model.HomeItemModel;
 import com.geeksworld.jktdvr.model.HomeTagModel;
 import com.geeksworld.jktdvr.tools.Url;
@@ -27,30 +28,25 @@ import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
  * Created by xhs on 2018/4/2.
  */
 
-public class FragMain0TabContentFragment extends BaseFragment {
+public class MineWorkTabContentFragment extends BaseFragment {
 
     //列表
     private RecyclerView recyclerView;
-    private RecyclerMainFrag0ViewItemAdapter itemAdapter;
+    private RecyclerMineWorkViewItemAdapter itemAdapter;
     private SmartRefreshLayout refreshView;
 
 
+
+
+    private int type ;
     private HomeViewModel homeViewModel;
-
-    public void setHomeViewModel(HomeViewModel homeViewModel) {
-        this.homeViewModel = homeViewModel;
-    }
-
     private HomeTagModel homeTagModel;
 
-    public void setHomeTagModel(HomeTagModel homeTagModel) {
-        this.homeTagModel = homeTagModel;
-    }
 
-    public static FragMain0TabContentFragment newInstance(HomeViewModel inhomeViewModel, HomeTagModel inHomeTagModel) {
-        FragMain0TabContentFragment newFragment = new FragMain0TabContentFragment();
-        newFragment.setHomeViewModel(inhomeViewModel);
-        newFragment.setHomeTagModel(inHomeTagModel);
+
+    public static MineWorkTabContentFragment newInstance(int type) {
+        MineWorkTabContentFragment newFragment = new MineWorkTabContentFragment();
+        newFragment.type = type;
         return newFragment;
 
     }
@@ -59,7 +55,7 @@ public class FragMain0TabContentFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater,container,savedInstanceState);
-        return inflater.inflate(R.layout.frag_main0_tab_content_fragment, container, false);
+        return inflater.inflate(R.layout.frag_main_mine_work_tab_content_fragment, container, false);
     }
 
     @Override
@@ -74,7 +70,8 @@ public class FragMain0TabContentFragment extends BaseFragment {
     @Override
     protected void initData() {
         super.initData();
-
+        homeViewModel = new HomeViewModel(getActivity(),getContext());
+        homeTagModel = homeViewModel.getTagModelInstance();
     }
 
     @Override
@@ -86,13 +83,13 @@ public class FragMain0TabContentFragment extends BaseFragment {
         recyclerView.requestFocus();
 
         refreshView = view.findViewById(R.id.refreshView);
-        refreshView.setOnRefreshListener(new FragMain0TabContentFragment.OnRefresh());
-        refreshView.setOnLoadmoreListener(new FragMain0TabContentFragment.OnLoadMore());
+        refreshView.setOnRefreshListener(new MineWorkTabContentFragment.OnRefresh());
+        refreshView.setOnLoadmoreListener(new MineWorkTabContentFragment.OnLoadMore());
     }
     private void initAdapter(){
-        itemAdapter = new RecyclerMainFrag0ViewItemAdapter(homeTagModel.getHomeTagDataModel().getDataList(),getContext());
+        itemAdapter = new RecyclerMineWorkViewItemAdapter(homeTagModel.getHomeTagDataModel().getDataList(),getContext());
         recyclerView.setAdapter(itemAdapter);
-        itemAdapter.setItemClickListener(new RecyclerMainFrag0ViewItemAdapter.OnItemClickListener() {
+        itemAdapter.setItemClickListener(new RecyclerMineWorkViewItemAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
                 HomeItemModel model = itemAdapter.getItem(position);
@@ -109,10 +106,23 @@ public class FragMain0TabContentFragment extends BaseFragment {
                 startActivity(intent);
             }
         });
+
+        itemAdapter.setOnButtonClickListener(new RecyclerMineWorkViewItemAdapter.OnButtonClickListener() {
+            @Override
+            public void onButtonEditClick(int position) {
+                Log.i("","edit");
+            }
+
+            @Override
+            public void onButtonDeleteClick(int position) {
+                Log.i("","deelte");
+            }
+        });
     }
 
     private void loadData() {
-        homeViewModel.postRequestTagDataListData(false,homeTagModel,"",HomeItemModel.HomeItemModelContentTypeAll, new BaseViewModel.OnRequestDataComplete<HomeTagModel>() {
+
+        homeViewModel.postRequestTagDataListData(true,homeTagModel,"",type, new BaseViewModel.OnRequestDataComplete<HomeTagModel>() {
             @Override
             public void success(HomeTagModel publishTagModel) {
                 itemAdapter.notifyDataSetChanged();

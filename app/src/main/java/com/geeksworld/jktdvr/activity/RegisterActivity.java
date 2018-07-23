@@ -16,6 +16,7 @@ import com.geeksworld.jktdvr.aBase.BaseViewModel;
 import com.geeksworld.jktdvr.model.UserModel;
 import com.geeksworld.jktdvr.tools.Common;
 import com.geeksworld.jktdvr.tools.MyTime;
+import com.geeksworld.jktdvr.tools.MyTime1;
 import com.geeksworld.jktdvr.tools.ShareKey;
 import com.geeksworld.jktdvr.tools.Tool;
 import com.geeksworld.jktdvr.viewModel.UserViewModel;
@@ -29,7 +30,7 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
     private TextView code;
     private TextView getCode;
     private EditText pass;
-    private MyTime myTime;
+    private MyTime1 myTime;
     private String msg_id;
     private SharedPreferences share;
 
@@ -73,7 +74,7 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
         findViewById(R.id.login_secret).setOnClickListener(this);
         findViewById(R.id.login_pass_visible).setOnTouchListener(this);
 
-        myTime = new MyTime(this, getCode, 60000, 1000);
+        myTime = new MyTime1(this, getCode, 60000, 1000,userViewModel);
     }
 
     @Override
@@ -139,7 +140,7 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
         userViewModel.postRequestGetValidateCode(phone, new BaseViewModel.OnRequestDataComplete<String>() {
             @Override
             public void success(String s) {
-
+                getCode.setText("验证码"+s);
             }
 
             @Override

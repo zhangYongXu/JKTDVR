@@ -68,32 +68,7 @@
         android:layout_height="1px"
         android:background="@color/gray_ling" />
 
-    <RelativeLayout
-        android:id="@+id/set_actitle_font_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="15dp"
-        android:background="@color/white">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:drawablePadding="10dp"
-            android:gravity="center"
-            android:text="@string/set_item_aticle_font" />
-
-        <TextView
-            android:id="@+id/set_actitle_font_textview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:drawablePadding="10dp"
-            android:drawableRight="@mipmap/main_page4_right"
-            android:gravity="center"
-            android:text="默认"/>
-    </RelativeLayout>
     <View
         android:layout_width="match_parent"
         android:layout_height="1px"

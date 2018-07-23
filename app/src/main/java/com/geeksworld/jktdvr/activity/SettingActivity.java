@@ -15,6 +15,7 @@ import com.geeksworld.jktdvr.aBase.BaseViewModel;
 
 import com.geeksworld.jktdvr.tools.Common;
 import com.geeksworld.jktdvr.tools.ShareKey;
+import com.geeksworld.jktdvr.tools.Tool;
 import com.geeksworld.jktdvr.tools.WebViewFontShare;
 
 
@@ -25,7 +26,6 @@ import com.geeksworld.jktdvr.tools.WebViewFontShare;
 public class SettingActivity extends BaseActivity implements View.OnClickListener{
     private SharedPreferences share;
 
-    private TextView articleTextView;
 
 
     @Override
@@ -63,9 +63,9 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
     @Override
     protected void initView() {
         super.initView();
-        articleTextView = (TextView)findViewById(R.id.set_actitle_font_textview) ;
+
         String name = WebViewFontShare.getSetting_WebView_FontSize_name(this);
-        articleTextView.setText(name);
+
         findViewById(R.id.logoutBtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -75,7 +75,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
 
         findViewById(R.id.set_check_version_layout).setOnClickListener(this);
         findViewById(R.id.set_about_layout).setOnClickListener(this);
-        findViewById(R.id.set_actitle_font_layout).setOnClickListener(this);
+
     }
 
     @Override
@@ -86,17 +86,18 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
                 loadVersionUpdateData();
             }break;
             case R.id.set_about_layout:{
-                //Intent intent = new Intent();
-                //intent.setClass(this,AboutActivity.class);
-                //startActivity(intent);
+                Intent intent = new Intent();
+                intent.setClass(this, PageWebActivity.class);
+                String url = "http://geeksworld.cn/";
+                intent.putExtra(PageWebActivity.INTENT_EXTRA_URL_KEY,url);
+                intent.putExtra(PageWebActivity.INTENT_EXTRA_NAME_KEY,"关于极客天地");
+                startActivity(intent);
             }break;
-            case R.id.set_actitle_font_layout:{
-                WebViewFontShare.selectWebviewFontSizePop(this,null,articleTextView);
-            }break;
+
         }
     }
     private void loadVersionUpdateData(){
-
+        Tool.toast(this,"已经是最新版本");
     }
 
     private void logout(){

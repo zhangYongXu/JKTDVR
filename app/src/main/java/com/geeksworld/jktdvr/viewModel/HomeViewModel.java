@@ -55,8 +55,8 @@ public class HomeViewModel extends BaseViewModel {
         homeTagModel.setDataDicValue("0");
         return homeTagModel;
     }
-    //请求获取所有tag
-    public void postRequestAllTagListData(final OnRequestDataComplete<List<HomeTagModel>> complete) {
+    //请求获取所有tag   isIncludeAllTag 是否包含’所有‘这个标签
+    public void postRequestAllTagListData(final boolean isIncludeAllTag ,final OnRequestDataComplete<List<HomeTagModel>> complete ) {
         HashMap<String, Object> map = new HashMap<>();
         map.put("dataDicValue", "worksClass" );
         String u_id = share.getInt(ShareKey.UID, 0)+"";
@@ -75,7 +75,10 @@ public class HomeViewModel extends BaseViewModel {
 
                         if(null != datas){
                             allTagList.clear();
-                            addFirstTagModel();
+                            if(isIncludeAllTag){
+                                addFirstTagModel();
+                            }
+
                             allTagList.addAll(datas);
 
                         }
@@ -106,13 +109,18 @@ public class HomeViewModel extends BaseViewModel {
         });
     }
 
+
     //请求获取所有tag 类型的数据
-    public void postRequestTagDataListData(final HomeTagModel homeTagModel,String searchTitle,int type, final OnRequestDataComplete<HomeTagModel> complete) {
+    public void postRequestTagDataListData(boolean isUseId,final HomeTagModel homeTagModel,String searchTitle,int type, final OnRequestDataComplete<HomeTagModel> complete) {
         HashMap<String, Object> map = new HashMap<>();
         map.put("page", homeTagModel.getHomeTagDataModel().getPageNumber()+"" );
         map.put("rows", homeTagModel.getHomeTagDataModel().getPageSize()+"");
-        String u_id = share.getInt(ShareKey.UID, 0)+"";
-        map.put("authorId",u_id);
+       if(isUseId){
+           String u_id = share.getInt(ShareKey.UID, 0)+"";
+           map.put("authorId",u_id);
+       }else {
+           map.put("authorId","0");
+       }
         String title = searchTitle;
         if(Tool.isNull(title)){
             title = "";

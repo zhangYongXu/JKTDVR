@@ -17,6 +17,7 @@ import com.geeksworld.jktdvr.R;
 import com.geeksworld.jktdvr.aBase.BaseViewModel;
 import com.geeksworld.jktdvr.activity.LoginActivity;
 
+import com.geeksworld.jktdvr.activity.MineWorkActivity;
 import com.geeksworld.jktdvr.activity.PersonInfoActivity;
 
 import com.geeksworld.jktdvr.activity.SettingActivity;
@@ -105,7 +106,7 @@ public class Frag_main4 extends BaseFragment implements View.OnClickListener{
                     Glide.with(getActivity()).load(userModel.getImg_url()).into(headImageView);
                  }
                 nicknameTextView.setText(userModel.getNick_name());
-                scoreTextView.setText("积分:"+userModel.getPoint());
+
             }
 
             @Override
@@ -139,7 +140,7 @@ public class Frag_main4 extends BaseFragment implements View.OnClickListener{
                 intent.setClass(getActivity(), PersonInfoActivity.class);
                 break;
             case R.id.main_page4_my_collection:
-                //intent.setClass(getActivity(), MyCollectionActivity.class);
+                intent.setClass(getActivity(), MineWorkActivity.class);
                 break;
             case R.id.main_page4_settings:
                 intent.setClass(getActivity(), SettingActivity.class);

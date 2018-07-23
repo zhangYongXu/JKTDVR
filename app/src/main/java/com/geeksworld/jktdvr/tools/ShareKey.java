@@ -30,12 +30,13 @@ public class ShareKey {
     public static final String HXID_MY = "hx_id";
     public static final String POINT = "point";
     public static final String PHONE = "phone";
+    public static final String TEL = "Tel";
     public static final String PASS = "pass";
     public static final String NICK = "nick";
     public static final String EMAIL = "email";
     public static final String WORK_POSITION = "work_position";
     public static final String SEX = "sex";
-    public static final String COMPANY = "company";
+    public static final String BIRTH = "birth";
     public static final String IMG_URL = "img_url";
     public static final String ISLOGIN = "isLogin";
     public static final String NONEWER = "newUser";

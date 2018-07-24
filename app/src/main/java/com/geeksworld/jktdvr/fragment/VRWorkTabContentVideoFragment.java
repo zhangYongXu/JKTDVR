@@ -9,8 +9,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
-import android.support.v4.graphics.BitmapCompat;
-import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AlertDialog;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -22,17 +20,16 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.VideoView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.geeksworld.jktdvr.R;
 import com.geeksworld.jktdvr.aBase.BaseViewModel;
 import com.geeksworld.jktdvr.activity.LoginActivity;
 import com.geeksworld.jktdvr.activity.MainActivity;
 import com.geeksworld.jktdvr.model.HomeItemModel;
 import com.geeksworld.jktdvr.model.HomeTagModel;
-import com.geeksworld.jktdvr.tools.Common;
 import com.geeksworld.jktdvr.tools.ShareKey;
 import com.geeksworld.jktdvr.tools.Tool;
 import com.geeksworld.jktdvr.tools.UploadPhoto;
@@ -46,16 +43,13 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.List;
 
 /**
  * Created by xhs on 2018/4/2.
  */
 
-public class FragMain3TabContentVideoFragment extends BaseFragment implements View.OnClickListener{
+public class VRWorkTabContentVideoFragment extends BaseFragment implements View.OnClickListener{
 
 
     private static final int RESULT_LOAD_IMAGE = 0003;
@@ -94,15 +88,20 @@ public class FragMain3TabContentVideoFragment extends BaseFragment implements Vi
         this.homeViewModel = homeViewModel;
     }
 
+    public void setHomeItemModel(HomeItemModel homeItemModel) {
+        this.homeItemModel = homeItemModel;
+    }
+
     private HomeTagModel homeTagModel;
 
     public void setHomeTagModel(HomeTagModel homeTagModel) {
         this.homeTagModel = homeTagModel;
     }
 
-    public static FragMain3TabContentVideoFragment newInstance(HomeViewModel inhomeViewModel) {
-        FragMain3TabContentVideoFragment newFragment = new FragMain3TabContentVideoFragment();
+    public static VRWorkTabContentVideoFragment newInstance(HomeViewModel inhomeViewModel,HomeItemModel homeItemModel) {
+        VRWorkTabContentVideoFragment newFragment = new VRWorkTabContentVideoFragment();
         newFragment.setHomeViewModel(inhomeViewModel);
+        newFragment.setHomeItemModel(homeItemModel);
         return newFragment;
 
     }
@@ -111,7 +110,7 @@ public class FragMain3TabContentVideoFragment extends BaseFragment implements Vi
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater,container,savedInstanceState);
-        return inflater.inflate(R.layout.frag_main3_tab_content_video1_fragment, container, false);
+        return inflater.inflate(R.layout.frag_main3_tab_content_video1_edit_fragment, container, false);
     }
 
     @Override
@@ -127,7 +126,7 @@ public class FragMain3TabContentVideoFragment extends BaseFragment implements Vi
         super.initData();
         glide = Glide.with(this);
         share = ShareKey.getShare(getActivity());
-        homeItemModel = new HomeItemModel();
+
         player=new MediaPlayer();
     }
 
@@ -170,6 +169,24 @@ public class FragMain3TabContentVideoFragment extends BaseFragment implements Vi
         view.findViewById(R.id.videoType).setOnClickListener(this);
         view.findViewById(R.id.videoSubmitButton).setOnClickListener(this);
         view.findViewById(R.id.videoSelectVideoButton).setOnClickListener(this);
+
+
+        videoNameEditText.setText(homeItemModel.getTitle());
+        videoTypeEditText.setText(homeItemModel.getDataDicName());
+        videoIntroductionEditText.setText(homeItemModel.getVideoTextarea());
+        String imgUrl = homeItemModel.getImgUrl();
+        Glide.with(getContext())
+                .load(imgUrl)
+                .error(R.drawable.hd_default_image)
+                .fallback(R.drawable.hd_default_image)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .skipMemoryCache(true)
+                .crossFade()
+                .thumbnail(0.6f)
+                .into(showImageView);
+        String videoUrl = homeItemModel.getVideoUrl();
+        Uri uri = Uri.parse(videoUrl);
+        startPlayerWithUri(uri);
     }
 
 
@@ -287,34 +304,18 @@ public class FragMain3TabContentVideoFragment extends BaseFragment implements Vi
                         UploadVideo.postVideoForm(Url.postfileUpload, null, videoPath, new UploadVideo.OnNetWorkResponse() {
                             @Override
                             public void downsuccess(String result) {
-                                try {
-                                    JSONObject obj = new JSONObject(result);
-                                    int code = obj.getInt("code");
-                                    String message = obj.getString("message");
-                                    if (code == 1) {
-                                        JSONObject result1 = obj.getJSONObject("data");
-                                        String img_url = result1.getString("imgUrl");
-                                        homeItemModel.setVideoUrl(img_url);
-                                        homeViewModel.postRequestAddOrEditVRWork(false, homeItemModel, new BaseViewModel.OnRequestDataComplete<List<HomeTagModel>>() {
-                                            @Override
-                                            public void success(List<HomeTagModel> homeTagModels) {
-                                                Tool.toast(getContext(),"VR视频制作成功");
-                                                clearUI();
-                                            }
-
-                                            @Override
-                                            public void failed(String error) {
-                                                Tool.toast(getContext(),"VR视频制作失败");
-                                            }
-                                        });
-                                    }else {
-                                        Tool.toast(getContext(),"上传视频失败,检查网络，请重试");
+                                homeViewModel.postRequestAddOrEditVRWork(false, homeItemModel, new BaseViewModel.OnRequestDataComplete<List<HomeTagModel>>() {
+                                    @Override
+                                    public void success(List<HomeTagModel> homeTagModels) {
+                                        Tool.toast(getContext(),"VR视频制作成功");
+                                        clearUI();
                                     }
-                                }catch (JSONException e) {
-                                    e.printStackTrace();
-                                    Tool.toast(getContext(),"上传视频失败,检查网络，请重试");
-                                }
 
+                                    @Override
+                                    public void failed(String error) {
+                                        Tool.toast(getContext(),"VR视频制作失败");
+                                    }
+                                });
                             }
 
                             @Override
@@ -324,8 +325,6 @@ public class FragMain3TabContentVideoFragment extends BaseFragment implements Vi
                         });
 
 
-                    }else {
-                        Tool.toast(getContext(),"上传视频封面图片失败,检查网络，请重试");
                     }
                 }catch (JSONException e) {
                     e.printStackTrace();
@@ -352,7 +351,7 @@ public class FragMain3TabContentVideoFragment extends BaseFragment implements Vi
 
     private void selectPic(){
         Intent i = new Intent(
-                Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 
         startActivityForResult(i, RESULT_LOAD_IMAGE);
     }
@@ -441,14 +440,27 @@ public class FragMain3TabContentVideoFragment extends BaseFragment implements Vi
 
 
 
-            startPlayer(uri);
+            startPlayerWithUri(uri);
         }
     }
-
-
-    private void startPlayer(Uri uri){
+//    private void startPlayerWithURL(String rul){
+//        try {
+//            player.setDataSource(getActivity(), url);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        startPlayer();
+//    }
+    private void startPlayerWithUri(Uri uri){
         try {
             player.setDataSource(getActivity(), uri);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        startPlayer();
+    }
+    private void startPlayer(){
+        try {
             holder=surfaceView.getHolder();
             holder.addCallback(new MyCallBack());
             player.prepare();

@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Application;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -101,6 +102,15 @@ public class MainActivity extends BaseFragActivity0 implements View.OnClickListe
 
     }
 
+    public static MainActivity MainActivityInstance(Activity currentActivity){
+        Application app = currentActivity.getApplication();
+        if(app instanceof BaseApplication) {
+            BaseApplication bApp = (BaseApplication) app;
+            return bApp.mainActivity;
+        }else {
+            return null;
+        }
+    }
 
 
     @Override
@@ -150,6 +160,9 @@ public class MainActivity extends BaseFragActivity0 implements View.OnClickListe
         viewPager.setCurrentItem(position);
     }
 
+    public void selectPage(int position){
+        viewPager.setCurrentItem(position);
+    }
     private class OnPageChanged implements ViewPager.OnPageChangeListener {
         @Override
         public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {

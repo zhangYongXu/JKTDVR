@@ -1,13 +1,17 @@
 package com.geeksworld.jktdvr.tools;
 
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
+import android.net.Uri;
 import android.os.Build;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.PopupWindow;
@@ -20,6 +24,7 @@ import com.geeksworld.jktdvr.model.HomeItemModel;
 import com.geeksworld.jktdvr.views.MyWidget;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
@@ -323,6 +328,51 @@ public class Common {
         if(Common.hasNotchInScreen(context)){//当有刘海屏幕时
             topStausViewRelativeLayout.setVisibility(View.GONE);
         }
+    }
+
+    public static File uriToFile(Uri uri, Context context) {
+        String path = null;
+        if ("file".equals(uri.getScheme())) {
+            path = uri.getEncodedPath();
+            if (path != null) {
+                path = Uri.decode(path);
+                ContentResolver cr = context.getContentResolver();
+                StringBuffer buff = new StringBuffer();
+                buff.append("(").append(MediaStore.Images.ImageColumns.DATA).append("=").append("'" + path + "'").append(")");
+                Cursor cur = cr.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, new String[] { MediaStore.Images.ImageColumns._ID, MediaStore.Images.ImageColumns.DATA }, buff.toString(), null, null);
+                int index = 0;
+                int dataIdx = 0;
+                for (cur.moveToFirst(); !cur.isAfterLast(); cur.moveToNext()) {
+                    index = cur.getColumnIndex(MediaStore.Images.ImageColumns._ID);
+                    index = cur.getInt(index);
+                    dataIdx = cur.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+                    path = cur.getString(dataIdx);
+                }
+                cur.close();
+                if (index == 0) {
+                } else {
+                    Uri u = Uri.parse("content://media/external/images/media/" + index);
+                    System.out.println("temp uri is :" + u);
+                }
+            }
+            if (path != null) {
+                return new File(path);
+            }
+        } else if ("content".equals(uri.getScheme())) {
+            // 4.2.2以后
+            String[] proj = { MediaStore.Images.Media.DATA };
+            Cursor cursor = context.getContentResolver().query(uri, proj, null, null, null);
+            if (cursor.moveToFirst()) {
+                int columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+                path = cursor.getString(columnIndex);
+            }
+            cursor.close();
+
+            return new File(path);
+        } else {
+            //Log.i(TAG, "Uri Scheme:" + uri.getScheme());
+        }
+        return null;
     }
 
 }

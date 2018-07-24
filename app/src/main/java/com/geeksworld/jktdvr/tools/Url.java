@@ -79,7 +79,10 @@ public class Url {
     public static final String postfileUpload = HOST + "img/fileUpload" +URLSuffix;
 
 
-    public static final String postimgSave = HOST + "/img/save" +URLSuffix;
+    public static final String postVRSave = HOST + "img/save" +URLSuffix;
+
+    public static final String postVRdelete = HOST + "img/delete" +URLSuffix;
+
 
     /*9)获取首页数据
         *  "page":"1"//第几页

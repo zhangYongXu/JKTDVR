@@ -8,11 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
-import android.support.design.widget.TabLayout;
-import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,13 +18,11 @@ import android.widget.ListView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.geeksworld.jktdvr.R;
 import com.geeksworld.jktdvr.aBase.BaseViewModel;
 import com.geeksworld.jktdvr.activity.LoginActivity;
 import com.geeksworld.jktdvr.activity.MainActivity;
-import com.geeksworld.jktdvr.activity.PageWebActivity;
-import com.geeksworld.jktdvr.activity.SettingActivity;
-import com.geeksworld.jktdvr.adapter.RecyclerMainFrag0ViewItemAdapter;
 import com.geeksworld.jktdvr.model.HomeItemModel;
 import com.geeksworld.jktdvr.model.HomeTagModel;
 import com.geeksworld.jktdvr.tools.ShareKey;
@@ -36,10 +30,6 @@ import com.geeksworld.jktdvr.tools.Tool;
 import com.geeksworld.jktdvr.tools.UploadPhoto;
 import com.geeksworld.jktdvr.tools.Url;
 import com.geeksworld.jktdvr.viewModel.HomeViewModel;
-import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.listener.OnLoadmoreListener;
-import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -51,7 +41,7 @@ import java.util.List;
  * Created by xhs on 2018/4/2.
  */
 
-public class FragMain3TabContentPicFragment extends BaseFragment implements View.OnClickListener{
+public class VRWorkEditTabContentPicFragment extends BaseFragment implements View.OnClickListener{
     private static final int RESULT_LOAD_IMAGE = 0002;
 
 
@@ -70,6 +60,10 @@ public class FragMain3TabContentPicFragment extends BaseFragment implements View
 
     private HomeItemModel homeItemModel;
 
+    public void setHomeItemModel(HomeItemModel homeItemModel) {
+        this.homeItemModel = homeItemModel;
+    }
+
     private SharedPreferences share;
     public void setHomeViewModel(HomeViewModel homeViewModel) {
         this.homeViewModel = homeViewModel;
@@ -81,9 +75,10 @@ public class FragMain3TabContentPicFragment extends BaseFragment implements View
         this.homeTagModel = homeTagModel;
     }
 
-    public static FragMain3TabContentPicFragment newInstance(HomeViewModel inhomeViewModel) {
-        FragMain3TabContentPicFragment newFragment = new FragMain3TabContentPicFragment();
+    public static VRWorkEditTabContentPicFragment newInstance(HomeViewModel inhomeViewModel,HomeItemModel homeItemModel) {
+        VRWorkEditTabContentPicFragment newFragment = new VRWorkEditTabContentPicFragment();
         newFragment.setHomeViewModel(inhomeViewModel);
+        newFragment.setHomeItemModel(homeItemModel);
         return newFragment;
 
     }
@@ -92,7 +87,7 @@ public class FragMain3TabContentPicFragment extends BaseFragment implements View
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater,container,savedInstanceState);
-        return inflater.inflate(R.layout.frag_main3_tab_content_pic_fragment, container, false);
+        return inflater.inflate(R.layout.frag_main3_tab_content_pic_edit_fragment, container, false);
     }
 
     @Override
@@ -106,7 +101,6 @@ public class FragMain3TabContentPicFragment extends BaseFragment implements View
         super.initData();
         glide = Glide.with(this);
         share = ShareKey.getShare(getActivity());
-        homeItemModel = new HomeItemModel();
     }
 
     @Override
@@ -116,6 +110,20 @@ public class FragMain3TabContentPicFragment extends BaseFragment implements View
         picTypeEditText = (EditText)view.findViewById(R.id.picType);
 
         showImageView = (ImageView)view.findViewById(R.id.showImageView);
+
+        picNmaeEditText.setText(homeItemModel.getTitle());
+        picTypeEditText.setText(homeItemModel.getDataDicName());
+        String imgUrl = homeItemModel.getImgUrl();
+        Glide.with(getContext())
+                .load(imgUrl)
+                .error(R.drawable.hd_default_image)
+                .fallback(R.drawable.hd_default_image)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .skipMemoryCache(true)
+                .crossFade()
+                .thumbnail(0.6f)
+                .into(showImageView);
+
 
         view.findViewById(R.id.picSelectTypeLayout).setOnClickListener(this);
         view.findViewById(R.id.picSelectPicButton).setOnClickListener(this);
@@ -180,10 +188,7 @@ public class FragMain3TabContentPicFragment extends BaseFragment implements View
             Tool.toast(getContext(),"请选择作品类型");
             return false;
         }
-        if(Tool.isNull(picOriginalPath)){
-            Tool.toast(getContext(),"请选择全景图片");
-            return false;
-        }
+
         return true;
     }
     private void postData(){
@@ -207,7 +212,10 @@ public class FragMain3TabContentPicFragment extends BaseFragment implements View
         homeItemModel.setVideoTextarea("");
         homeItemModel.setVideoUrl("");
 
-
+        if(null == picOriginalPath){
+            save(homeItemModel);
+            return;
+        }
         UploadPhoto.postPicForm(Url.postfileUpload, null, picPath, new UploadPhoto.OnNetWorkResponse() {
             @Override
             public void downsuccess(String result) {
@@ -219,18 +227,8 @@ public class FragMain3TabContentPicFragment extends BaseFragment implements View
                         JSONObject result1 = obj.getJSONObject("data");
                         String img_url = result1.getString("imgUrl");
                         homeItemModel.setImgUrl(img_url);
-                        homeViewModel.postRequestAddOrEditVRWork(false, homeItemModel, new BaseViewModel.OnRequestDataComplete<List<HomeTagModel>>() {
-                            @Override
-                            public void success(List<HomeTagModel> homeTagModels) {
-                                Tool.toast(getContext(),"VR全景图制作成功");
-                                clearUI();
-                            }
 
-                            @Override
-                            public void failed(String error) {
-                                Tool.toast(getContext(),"VR全景图制作失败");
-                            }
-                        });
+                        save(homeItemModel);
 
                     }
                 }catch (JSONException e) {
@@ -245,15 +243,29 @@ public class FragMain3TabContentPicFragment extends BaseFragment implements View
             }
         });
     }
+    private void save(HomeItemModel homeItemModel){
+        homeViewModel.postRequestAddOrEditVRWork(true, homeItemModel, new BaseViewModel.OnRequestDataComplete<List<HomeTagModel>>() {
+            @Override
+            public void success(List<HomeTagModel> homeTagModels) {
+                Tool.toast(getContext(),"VR全景图制作成功");
+                clearUI();
+            }
+
+            @Override
+            public void failed(String error) {
+                Tool.toast(getContext(),"VR全景图制作失败");
+            }
+        });
+    }
     private void clearUI(){
         picNmaeEditText.setText("");
         showImageView.setImageResource(R.drawable.hd_default_image);
         picOriginalPath = null;
-        MainActivity.MainActivityInstance(getActivity()).selectPage(0);
+        getActivity().finish();
     }
     private void selectPic(){
         Intent i = new Intent(
-                Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 
         startActivityForResult(i, RESULT_LOAD_IMAGE);
     }

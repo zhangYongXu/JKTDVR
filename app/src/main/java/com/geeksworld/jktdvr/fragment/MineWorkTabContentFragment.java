@@ -1,5 +1,6 @@
 package com.geeksworld.jktdvr.fragment;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -12,7 +13,9 @@ import android.view.ViewGroup;
 
 import com.geeksworld.jktdvr.R;
 import com.geeksworld.jktdvr.aBase.BaseViewModel;
+import com.geeksworld.jktdvr.activity.LoginActivity;
 import com.geeksworld.jktdvr.activity.PageWebActivity;
+import com.geeksworld.jktdvr.activity.VRWorkEditActivity;
 import com.geeksworld.jktdvr.adapter.RecyclerMainFrag0ViewItemAdapter;
 import com.geeksworld.jktdvr.adapter.RecyclerMineWorkViewItemAdapter;
 import com.geeksworld.jktdvr.model.HomeItemModel;
@@ -23,6 +26,8 @@ import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadmoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
+
+import java.util.List;
 
 /**
  * Created by xhs on 2018/4/2.
@@ -110,16 +115,50 @@ public class MineWorkTabContentFragment extends BaseFragment {
         itemAdapter.setOnButtonClickListener(new RecyclerMineWorkViewItemAdapter.OnButtonClickListener() {
             @Override
             public void onButtonEditClick(int position) {
+                HomeItemModel model = itemAdapter.getItem(position);
+
+                Intent intent = new Intent();
+                intent.setClass(getActivity(), VRWorkEditActivity.class);
+                intent.putExtra(HomeItemModel.SerializableKey,model);
+                startActivity(intent);
                 Log.i("","edit");
             }
 
             @Override
             public void onButtonDeleteClick(int position) {
+                HomeItemModel model = itemAdapter.getItem(position);
+                delete(model);
                 Log.i("","deelte");
             }
         });
     }
 
+    private void delete(final HomeItemModel homeItemModel){
+        new android.app.AlertDialog.Builder(getContext()).setMessage("确认删除吗!")
+                .setPositiveButton("确认", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        homeViewModel.postRequestDeleteVRWork(homeItemModel, new BaseViewModel.OnRequestDataComplete<List<HomeTagModel>>() {
+                            @Override
+                            public void success(List<HomeTagModel> homeTagModels) {
+                                homeTagModel.getHomeTagDataModel().setPageNumber(1);
+                                loadData();
+
+                            }
+
+                            @Override
+                            public void failed(String error) {
+
+                            }
+                        });
+                    }
+                }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+            }
+        }).show();
+    }
     private void loadData() {
 
         homeViewModel.postRequestTagDataListData(true,homeTagModel,"",type, new BaseViewModel.OnRequestDataComplete<HomeTagModel>() {
@@ -132,6 +171,8 @@ public class MineWorkTabContentFragment extends BaseFragment {
 
             @Override
             public void failed(String error) {
+                homeTagModel.getHomeTagDataModel().getDataList().clear();
+                itemAdapter.notifyDataSetChanged();
                 refreshView.finishRefresh();
                 refreshView.finishLoadmore();
             }

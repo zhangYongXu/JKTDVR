@@ -32,6 +32,7 @@ public class HomeItemModel extends BaseModel implements Serializable{
     private String authorName;
     private String title;
     private int classVal;
+    private String dataDicName;
 
     private int type;
 
@@ -81,6 +82,14 @@ public class HomeItemModel extends BaseModel implements Serializable{
 
     public int getClassVal() {
         return classVal;
+    }
+
+    public void setDataDicName(String dataDicName) {
+        this.dataDicName = dataDicName;
+    }
+
+    public String getDataDicName() {
+        return dataDicName;
     }
 
     public void setType(int type) {

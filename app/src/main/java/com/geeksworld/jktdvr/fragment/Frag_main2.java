@@ -13,6 +13,7 @@ import android.widget.RelativeLayout;
 import com.geeksworld.jktdvr.R;
 import com.geeksworld.jktdvr.aBase.BaseViewModel;
 import com.geeksworld.jktdvr.activity.PageWebActivity;
+import com.geeksworld.jktdvr.activity.PlayerActivity;
 import com.geeksworld.jktdvr.adapter.RecyclerMainFrag0ViewItemAdapter;
 import com.geeksworld.jktdvr.model.HomeItemModel;
 import com.geeksworld.jktdvr.model.HomeTagModel;
@@ -88,16 +89,23 @@ public class Frag_main2 extends BaseFragment{
             public void onItemClick(int position) {
                 HomeItemModel model = itemAdapter.getItem(position);
 
-                Intent intent = new Intent();
-                intent.setClass(getActivity(), PageWebActivity.class);
-                String url = Url.BASE_HOST ;
                 if(model.getType() == HomeItemModel.HomeItemModelContentTypePicture){
-                    url = url + "pub/webvrIndex?picUrl=" + model.getImgUrl();
+                    Intent intent = new Intent();
+                    intent.setClass(getActivity(), PageWebActivity.class);
+                    String url = Url.BASE_HOST ;
+                    if(model.getType() == HomeItemModel.HomeItemModelContentTypePicture){
+                        url = url + "pub/webvrIndex?picUrl=" + model.getImgUrl();
+                    }else {
+                        url = url + "/pub/webvrPlayer?picUrl=" + model.getVideoUrl();
+                    }
+                    intent.putExtra(PageWebActivity.INTENT_EXTRA_URL_KEY,url);
+                    startActivity(intent);
                 }else {
-                    url = url + "/pub/webvrPlayer?picUrl=" + model.getVideoUrl();
+                    Intent intent = new Intent();
+                    intent.setClass(getActivity(), PlayerActivity.class);
+                    intent.putExtra(HomeItemModel.SerializableKey,model);
+                    startActivity(intent);
                 }
-                intent.putExtra(PageWebActivity.INTENT_EXTRA_URL_KEY,url);
-                startActivity(intent);
             }
         });
     }

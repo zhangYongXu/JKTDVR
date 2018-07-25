@@ -16,6 +16,9 @@ import com.geeksworld.jktdvr.aBase.BaseActivity;
 import com.geeksworld.jktdvr.tools.Common;
 import com.geeksworld.jktdvr.tools.Tool;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+
 /**
  * Created by xhs on 2017/11/27.
  */
@@ -98,10 +101,36 @@ public class PageWebActivity extends BaseActivity {
         else {
             webView.loadDataWithBaseURL(null, url, "text/html", "utf-8", null);
         }
-        //webView.loadUrl("file:///android_asset/webvr/index.html");
+        //webView.loadUrl("file:///android_asset/webvr/login_clause.html");
+        //webView.loadUrl("file:///android_asset/sample_vrPlayer/sample_全屏尺寸.html");
+        //processWebString("webvr/login_clause.html");
+    }
+
+    private void processWebString(String filepath) {
+        // 加载 asset 文件
+        String tpl = getFromAssets(filepath);
+        webView.loadDataWithBaseURL(null, tpl, "text/html", "utf-8", null);
     }
 
 
+    /*
+     * 获取html文件
+     */
+    public String getFromAssets(String fileName) {
+        try {
+            InputStreamReader inputReader = new InputStreamReader(
+                    getResources().getAssets().open(fileName));
+            BufferedReader bufReader = new BufferedReader(inputReader);
+            String line = "";
+            String Result = "";
+            while ((line = bufReader.readLine()) != null)
+                Result += line;
+            return Result;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
     @Override
     public void onBackPressed() {
         if (webView.canGoBack())

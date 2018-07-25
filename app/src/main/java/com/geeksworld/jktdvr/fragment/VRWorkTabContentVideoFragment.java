@@ -402,7 +402,7 @@ public class VRWorkTabContentVideoFragment extends BaseFragment implements View.
         homeViewModel.postRequestAddOrEditVRWork2(false, homeItemModel, new BaseViewModel.OnRequestDataComplete<List<HomeTagModel>>() {
             @Override
             public void success(List<HomeTagModel> homeTagModels) {
-                Tool.toast(getContext(),"VR视频制作成功");
+                Tool.toast(getContext(),"VR视频修改成功");
                 clearUI();
             }
 

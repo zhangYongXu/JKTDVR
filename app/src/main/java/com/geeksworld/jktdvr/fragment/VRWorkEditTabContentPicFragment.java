@@ -257,7 +257,7 @@ public class VRWorkEditTabContentPicFragment extends BaseFragment implements Vie
         homeViewModel.postRequestAddOrEditVRWork(true, homeItemModel, new BaseViewModel.OnRequestDataComplete<List<HomeTagModel>>() {
             @Override
             public void success(List<HomeTagModel> homeTagModels) {
-                Tool.toast(getContext(),"VR全景图制作成功");
+                Tool.toast(getContext(),"VR全景图修改成功");
                 clearUI();
             }
 

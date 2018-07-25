@@ -95,8 +95,10 @@ public class PageWebActivity extends BaseActivity {
     private void loadData() {
         if (url.startsWith("http"))
             webView.loadUrl(url);
-        else
+        else {
             webView.loadDataWithBaseURL(null, url, "text/html", "utf-8", null);
+        }
+        //webView.loadUrl("file:///android_asset/webvr/index.html");
     }
 
 

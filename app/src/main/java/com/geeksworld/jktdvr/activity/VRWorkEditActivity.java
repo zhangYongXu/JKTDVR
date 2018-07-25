@@ -57,8 +57,7 @@ public class VRWorkEditActivity extends BaseActivity{
         initNavigationView();
         initView();
         loadData();
-        initContent();
-        selectPage();
+
     }
     //导航设置
     private void initNavigationView(){
@@ -93,7 +92,8 @@ public class VRWorkEditActivity extends BaseActivity{
         homeViewModel.postRequestAllTagListData(false, new BaseViewModel.OnRequestDataComplete<List<HomeTagModel>>() {
             @Override
             public void success(List<HomeTagModel> homeTagModels) {
-
+                initContent();
+                selectPage();
             }
 
             @Override

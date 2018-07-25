@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
@@ -37,6 +38,7 @@ import com.geeksworld.jktdvr.tools.UploadVideo;
 import com.geeksworld.jktdvr.tools.UriUtils;
 import com.geeksworld.jktdvr.tools.Url;
 import com.geeksworld.jktdvr.viewModel.HomeViewModel;
+import com.geeksworld.jktdvr.views.ProgressDialog;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -51,13 +53,15 @@ import java.util.List;
 
 public class VRWorkTabContentVideoFragment extends BaseFragment implements View.OnClickListener{
 
-
+    private interface OnUploadComplete{
+        void uploadComplete(String url);
+    };
     private static final int RESULT_LOAD_IMAGE = 0003;
     private static final int RESULT_LOAD_VIDEO = 0004;
 
     private HomeViewModel homeViewModel;
 
-
+    private ProgressDialog progressDialog;
     private EditText videoTypeEditText;
     private EditText videoNameEditText;
     private EditText videoIntroductionEditText;
@@ -77,7 +81,7 @@ public class VRWorkTabContentVideoFragment extends BaseFragment implements View.
 
     private ImageView showImageView;
 
-    //private VideoView videoView;
+
     private LinearLayout videoViewLayout;
 
     private SurfaceView surfaceView;
@@ -117,7 +121,7 @@ public class VRWorkTabContentVideoFragment extends BaseFragment implements View.
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        //videoView.setFocusable(false);
+
 
     }
 
@@ -126,8 +130,18 @@ public class VRWorkTabContentVideoFragment extends BaseFragment implements View.
         super.initData();
         glide = Glide.with(this);
         share = ShareKey.getShare(getActivity());
-
+        progressDialog = new ProgressDialog(getContext());
         player=new MediaPlayer();
+
+        for(HomeTagModel model : homeViewModel.getAllTagList()){
+            if(!Tool.isNull(model.getDataDicValue())){
+                int dataDicValue = Integer.parseInt(model.getDataDicValue());
+                if(dataDicValue == homeItemModel.getClassVal()){
+                    videoHomeTagModel = model;
+                    break;
+                }
+            }
+        }
     }
 
     @Override
@@ -140,13 +154,7 @@ public class VRWorkTabContentVideoFragment extends BaseFragment implements View.
         videoIntroductionEditText = (EditText)view.findViewById(R.id.videointroduction);
         showImageView = (ImageView)view.findViewById(R.id.showImageView);
 
-        //videoView = (VideoView) view.findViewById(R.id.videoView);
-//        videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-//            @Override
-//            public void onPrepared(MediaPlayer mediaPlayer) {
-//                videoView.start();
-//            }
-//        });
+
 
         surfaceView = (SurfaceView) view.findViewById(R.id.surfaceView);
 
@@ -155,11 +163,7 @@ public class VRWorkTabContentVideoFragment extends BaseFragment implements View.
         videoViewLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                if(videoView.isPlaying()){
-//                    videoView.pause();
-//                }else {
-//                    videoView.start();
-//                }
+
             }
         });
 
@@ -171,22 +175,28 @@ public class VRWorkTabContentVideoFragment extends BaseFragment implements View.
         view.findViewById(R.id.videoSelectVideoButton).setOnClickListener(this);
 
 
-        videoNameEditText.setText(homeItemModel.getTitle());
-        videoTypeEditText.setText(homeItemModel.getDataDicName());
-        videoIntroductionEditText.setText(homeItemModel.getVideoTextarea());
-        String imgUrl = homeItemModel.getImgUrl();
-        Glide.with(getContext())
-                .load(imgUrl)
-                .error(R.drawable.hd_default_image)
-                .fallback(R.drawable.hd_default_image)
-                .diskCacheStrategy(DiskCacheStrategy.NONE)
-                .skipMemoryCache(true)
-                .crossFade()
-                .thumbnail(0.6f)
-                .into(showImageView);
-        String videoUrl = homeItemModel.getVideoUrl();
-        Uri uri = Uri.parse(videoUrl);
-        startPlayerWithUri(uri);
+        if(homeItemModel.getType() == HomeItemModel.HomeItemModelContentTypeVideo){
+            videoNameEditText.setText(homeItemModel.getTitle());
+            videoTypeEditText.setText(homeItemModel.getDataDicName());
+            videoIntroductionEditText.setText(homeItemModel.getVideoTextarea());
+            String imgUrl = homeItemModel.getImgUrl();
+            Glide.with(getContext())
+                    .load(imgUrl)
+                    .error(R.drawable.hd_default_image)
+                    .fallback(R.drawable.hd_default_image)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .skipMemoryCache(true)
+                    .crossFade()
+                    .thumbnail(0.6f)
+                    .into(showImageView);
+            String videoUrl = homeItemModel.getVideoUrl();
+            if(!Tool.isNull(videoUrl)){
+                Uri uri = Uri.parse(videoUrl);
+                startPlayer(uri);
+            }
+
+        }
+
     }
 
 
@@ -254,8 +264,12 @@ public class VRWorkTabContentVideoFragment extends BaseFragment implements View.
             Tool.toast(getContext(),"请选择作品类型");
             return false;
         }
-        if(Tool.isNull(picOriginalPath)){
+        if(Tool.isNull(homeItemModel.getImgUrl()) && Tool.isNull(picOriginalPath)){
             Tool.toast(getContext(),"请选择视频封面图片");
+            return false;
+        }
+        if(Tool.isNull(homeItemModel.getVideoUrl()) && Tool.isNull(videoOriginalPath)){
+            Tool.toast(getContext(),"请选择视频");
             return false;
         }
         String intro = videoIntroductionEditText.getText().toString();
@@ -266,8 +280,6 @@ public class VRWorkTabContentVideoFragment extends BaseFragment implements View.
         return true;
     }
     private void postData(){
-
-
         if(!validate()){
             return;
         }
@@ -286,9 +298,41 @@ public class VRWorkTabContentVideoFragment extends BaseFragment implements View.
         homeItemModel.setType(HomeItemModel.HomeItemModelContentTypeVideo);
         homeItemModel.setTitle(name);
         homeItemModel.setVideoTextarea(intro);
-        homeItemModel.setVideoUrl("");
 
+        if(!Tool.isNull(picPath) && !Tool.isNull(videoPath)){
+            uploadPic(homeItemModel, picPath, new OnUploadComplete() {
+                @Override
+                public void uploadComplete(String url) {
+                    uploadVideo(homeItemModel, videoPath, new OnUploadComplete() {
+                        @Override
+                        public void uploadComplete(String url) {
+                            saveData(homeItemModel);
+                        }
+                    });
+                }
+            });
+        }else if(!Tool.isNull(picPath) && Tool.isNull(videoPath)){
+            uploadPic(homeItemModel, picPath, new OnUploadComplete() {
+                @Override
+                public void uploadComplete(String url) {
+                    saveData(homeItemModel);
+                }
+            });
+        }else if(Tool.isNull(picPath) && !Tool.isNull(videoPath)){
+            uploadVideo(homeItemModel, videoPath, new OnUploadComplete() {
+                @Override
+                public void uploadComplete(String url) {
+                    saveData(homeItemModel);
+                }
+            });
+        }else if(Tool.isNull(picPath) && Tool.isNull(videoPath)){
+            saveData(homeItemModel);
+        }
 
+    }
+
+    //上传图片
+    private void uploadPic(final HomeItemModel homeItemModel, String picPath, final OnUploadComplete complete){
         UploadPhoto.postPicForm(Url.postfileUpload, null, picPath, new UploadPhoto.OnNetWorkResponse() {
             @Override
             public void downsuccess(String result) {
@@ -300,31 +344,9 @@ public class VRWorkTabContentVideoFragment extends BaseFragment implements View.
                         JSONObject result1 = obj.getJSONObject("data");
                         String img_url = result1.getString("imgUrl");
                         homeItemModel.setImgUrl(img_url);
-
-                        UploadVideo.postVideoForm(Url.postfileUpload, null, videoPath, new UploadVideo.OnNetWorkResponse() {
-                            @Override
-                            public void downsuccess(String result) {
-                                homeViewModel.postRequestAddOrEditVRWork(false, homeItemModel, new BaseViewModel.OnRequestDataComplete<List<HomeTagModel>>() {
-                                    @Override
-                                    public void success(List<HomeTagModel> homeTagModels) {
-                                        Tool.toast(getContext(),"VR视频制作成功");
-                                        clearUI();
-                                    }
-
-                                    @Override
-                                    public void failed(String error) {
-                                        Tool.toast(getContext(),"VR视频制作失败");
-                                    }
-                                });
-                            }
-
-                            @Override
-                            public void downfailed(String error) {
-                                Tool.toast(getContext(),"上传视频失败,检查网络，请重试");
-                            }
-                        });
-
-
+                        complete.uploadComplete(img_url);
+                    }else {
+                        Tool.toast(getContext(),"上传视频封面图片失败,检查网络，请重试");
                     }
                 }catch (JSONException e) {
                     e.printStackTrace();
@@ -338,14 +360,63 @@ public class VRWorkTabContentVideoFragment extends BaseFragment implements View.
             }
         });
     }
+    //上传视频
+    private void uploadVideo(final HomeItemModel homeItemModel, String videoPath , final OnUploadComplete complete){
+        progressDialog.show();
+        UploadVideo.postVideoForm2(Url.postfileUpload, null, videoPath, new UploadVideo.OnNetWorkResponse() {
+            @Override
+            public void downsuccess(String result) {
+                progressDialog.dismiss();
+                try {
+                    JSONObject obj = new JSONObject(result);
+                    int code = obj.getInt("code");
+                    String message = obj.getString("message");
+                    if (code == 1) {
+                        JSONObject result1 = obj.getJSONObject("data");
+                        String img_url = result1.getString("imgUrl");
+                        homeItemModel.setVideoUrl(img_url);
+                        complete.uploadComplete(img_url);
+                    }else {
+                        Tool.toast(getContext(),"上传视频失败,检查网络，请重试");
+                    }
+                }catch (JSONException e) {
+                    e.printStackTrace();
+                    Tool.toast(getContext(),"上传视频失败,检查网络，请重试");
+                }
+            }
+            @Override
+            public void uploadProgress(long currentBytes, long contentLength, boolean isUploadComplete) {
+                int progress = (int) ((currentBytes / (float) contentLength)*100);
+                Log.i("uploadProgress:",progress+"");
+                progressDialog.setProgress(progress);
+            }
+            @Override
+            public void downfailed(String error) {
+                progressDialog.dismiss();
+                Tool.toast(getContext(),"上传视频失败,检查网络，请重试");
+            }
+        });
+    }
+    //保存数据
+    private void saveData(HomeItemModel homeItemModel){
+        homeViewModel.postRequestAddOrEditVRWork2(false, homeItemModel, new BaseViewModel.OnRequestDataComplete<List<HomeTagModel>>() {
+            @Override
+            public void success(List<HomeTagModel> homeTagModels) {
+                Tool.toast(getContext(),"VR视频制作成功");
+                clearUI();
+            }
+
+            @Override
+            public void failed(String error) {
+                Tool.toast(getContext(),"VR视频制作失败");
+            }
+        });
+    }
     private void clearUI(){
-        videoNameEditText.setText("");
-        videoIntroductionEditText.setText("");
-        showImageView.setImageResource(R.drawable.hd_default_image);
-        picOriginalPath = null;
-        videoOriginalPath = null;
-        player.pause();
-        MainActivity.MainActivityInstance(getActivity()).selectPage(0);
+        player.stop();
+        player.release();
+        player = null;
+        getActivity().finish();
     }
 
 
@@ -410,7 +481,18 @@ public class VRWorkTabContentVideoFragment extends BaseFragment implements View.
     @Override
     public void onResume() {
         super.onResume();
-        //videoView.setFocusable(false);
+        if(null != player) {
+            player.start();
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if(null != player){
+            player.pause();
+        }
+
     }
 
     @Override
@@ -440,64 +522,67 @@ public class VRWorkTabContentVideoFragment extends BaseFragment implements View.
 
 
 
-            startPlayerWithUri(uri);
+            startPlayer(uri);
         }
     }
-//    private void startPlayerWithURL(String rul){
-//        try {
-//            player.setDataSource(getActivity(), url);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        startPlayer();
-//    }
-    private void startPlayerWithUri(Uri uri){
-        try {
-            player.setDataSource(getActivity(), uri);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        startPlayer();
-    }
-    private void startPlayer(){
-        try {
-            holder=surfaceView.getHolder();
-            holder.addCallback(new MyCallBack());
-            player.prepare();
-            player.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                @Override
-                public void onPrepared(MediaPlayer mp) {
-                    // 首先取得video的宽和高
-                    int vWidth = player.getVideoWidth();
-                    int vHeight = player.getVideoHeight();
+    private void initPlayer(){
 
-                    // 该LinearLayout的父容器 android:orientation="vertical" 必须
-                    LinearLayout linearLayout = videoViewLayout;
-                    int lw = linearLayout.getWidth();
-                    int lh = linearLayout.getHeight();
+        holder=surfaceView.getHolder();
+        holder.addCallback(new MyCallBack());
 
-                    if (vWidth > lw || vHeight > lh) {
-                        // 如果video的宽或者高超出了当前屏幕的大小，则要进行缩放
-                        float wRatio = (float) vWidth / (float) lw;
-                        float hRatio = (float) vHeight / (float) lh;
+        player.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mp) {
+                // 首先取得video的宽和高
+                int vWidth = player.getVideoWidth();
+                int vHeight = player.getVideoHeight();
 
-                        // 选择大的一个进行缩放
-                        float ratio = Math.max(wRatio, hRatio);
-                        vWidth = (int) Math.ceil((float) vWidth / ratio);
-                        vHeight = (int) Math.ceil((float) vHeight / ratio);
+                // 该LinearLayout的父容器 android:orientation="vertical" 必须
+                LinearLayout linearLayout = videoViewLayout;
+                int lw = linearLayout.getWidth();
+                int lh = linearLayout.getHeight();
 
-                        // 设置surfaceView的布局参数
-                        LinearLayout.LayoutParams lp= new LinearLayout.LayoutParams(vWidth, vHeight);
-                        lp.gravity = Gravity.CENTER;
-                        surfaceView.setLayoutParams(lp);
-                    }
+                if (vWidth > lw || vHeight > lh) {
+                    // 如果video的宽或者高超出了当前屏幕的大小，则要进行缩放
+                    float wRatio = (float) vWidth / (float) lw;
+                    float hRatio = (float) vHeight / (float) lh;
 
-                    player.start();
-                    player.setLooping(true);
+                    // 选择大的一个进行缩放
+                    float ratio = Math.max(wRatio, hRatio);
+                    vWidth = (int) Math.ceil((float) vWidth / ratio);
+                    vHeight = (int) Math.ceil((float) vHeight / ratio);
+
+                    // 设置surfaceView的布局参数
+                    LinearLayout.LayoutParams lp= new LinearLayout.LayoutParams(vWidth, vHeight);
+                    lp.gravity = Gravity.CENTER;
+                    surfaceView.setLayoutParams(lp);
                 }
-            });
+
+                player.start();
+                player.setLooping(true);
+            }
+        });
+
+    }
+    private void startPlayer(Uri uri){
+        videoViewLayout.setVisibility(View.VISIBLE);
+        try {
+            if(player != null){
+                player.stop();
+                player.reset();
+                player.release();
+                player = null;
+            }
+            player = new MediaPlayer();
+            initPlayer();
+
+            player.setDataSource(getActivity(), uri);
+            player.prepare();
+
         } catch (IOException e) {
             e.printStackTrace();
+        }catch (IllegalStateException e1){
+            e1.printStackTrace();
         }
     }
     private class MyCallBack implements SurfaceHolder.Callback {

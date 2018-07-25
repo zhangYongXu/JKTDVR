@@ -228,6 +228,58 @@ public class HomeViewModel extends BaseViewModel {
         });
     }
 
+    //添加 或编辑全景作品 isEdit 是否是编辑
+    public void postRequestAddOrEditVRWork2(final boolean isEdit,HomeItemModel homeItemModel,final OnRequestDataComplete<List<HomeTagModel>> complete ) {
+        HashMap<String, Object> map = new HashMap<>();
+        if(isEdit){
+            map.put("id", homeItemModel.getId()+"" );
+        }else {
+            map.put("id", "0" );
+        }
+
+        map.put("authorId",homeItemModel.getAuthorId()+"");
+        map.put("authorName",homeItemModel.getAuthorName());
+        map.put("title",homeItemModel.getTitle());
+        map.put("classVal",homeItemModel.getClassVal()+"");
+        map.put("imgUrl",homeItemModel.getImgUrl());
+        map.put("videoUrl",homeItemModel.getVideoUrl());
+        map.put("videoTextarea",homeItemModel.getVideoTextarea());
+        map.put("type",homeItemModel.getType()+"");
+
+        HttpUtil.requestPostNetWork2(Url.postVRSave, Tool.getParams(getActivity(), map), new HttpUtil.OnNetWorkResponse() {
+            @Override
+            public void downsuccess(String result) {
+                try {
+                    JSONObject obj = new JSONObject(result);
+                    int code = obj.getInt("code");
+                    String message = obj.getString("message");
+                    if (code == 1) {
+                        if(null != complete){
+                            complete.success(allTagList);
+                        }
+                    } else {
+                        Tool.toast(getActivity(), message);
+                        if(null != complete){
+                            complete.failed(message);
+                        }
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    if(null != complete){
+                        complete.failed(e.toString());
+                    }
+                }
+            }
+
+            @Override
+            public void downfailed(String error) {
+                if(null != complete){
+                    complete.failed(error);
+                }
+            }
+        });
+    }
+
     //删除全景作品
     public void postRequestDeleteVRWork(HomeItemModel homeItemModel,final OnRequestDataComplete<List<HomeTagModel>> complete ) {
         HashMap<String, Object> map = new HashMap<>();

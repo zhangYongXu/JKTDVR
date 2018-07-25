@@ -5,9 +5,9 @@ package com.geeksworld.jktdvr.tools;
  */
 
 public class Url {
-    public static final String BASE_HOST = "http://59.110.227.15:8888/";
+    //public static final String BASE_HOST = "http://59.110.227.15:8888/";
 
-    //public static final String HOST = "http://192.168.0.108:8080/BigEduCrm/app/";
+    public static final String BASE_HOST = "http://192.168.1.5:8888/";
     public static final String HOST = BASE_HOST+"ap/";
 
     public static final String URLSuffix = "";

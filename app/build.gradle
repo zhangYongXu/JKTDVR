@@ -43,4 +43,7 @@ dependencies {
     //图片上传 使用internal.org.apache.http.entity.mime需要
     compile 'com.hyphenate:kefu-easeui-android:latest.release'
 
+    compile 'com.squareup.okhttp3:okhttp:3.6.0'
+    compile 'com.squareup.okio:okio:1.7.0'
+
 }

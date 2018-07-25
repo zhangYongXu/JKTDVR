@@ -2,6 +2,7 @@ package com.geeksworld.jktdvr.tools;
 
 import android.graphics.Bitmap;
 import android.os.Handler;
+import android.util.Log;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -13,6 +14,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
@@ -20,11 +22,21 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.TimeUnit;
 
 import internal.org.apache.http.entity.mime.HttpMultipartMode;
 import internal.org.apache.http.entity.mime.MultipartEntity;
 import internal.org.apache.http.entity.mime.content.FileBody;
 import internal.org.apache.http.entity.mime.content.StringBody;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 
 /**
@@ -38,6 +50,8 @@ public class UploadVideo {
         public void downsuccess(String result);
 
         public void downfailed(String error);
+
+        public void uploadProgress(long currentBytes, long contentLength,boolean isUploadComplete);
     }
 
 
@@ -69,17 +83,10 @@ public class UploadVideo {
                     // 添加文件参数
 
                     if (f != null && f.exists()) {
-//                        int degree;
-//                        Bitmap srcBtm;
-//                        Bitmap returnBtm;
                         if (f != null && f.exists()) {
-//                            degree = ImageUtil.getBitmapDegree(f.getAbsolutePath());
-//                            srcBtm = ImageUtil.getBitmapThumbnail(f.getAbsolutePath());
-//                            returnBtm = ImageUtil.rotateBitmapByDegree(srcBtm, degree);
                             try {
                                 FileOutputStream out = new FileOutputStream(f);
                                 entity.addPart("fileName", new FileBody(f));
-                                //returnBtm.compress(Bitmap.CompressFormat.PNG, 40, out);
                                 out.flush();
                                 out.close();
                             } catch (Exception e) {
@@ -130,5 +137,63 @@ public class UploadVideo {
             }
         }).start();
     }
+    public static void postVideoForm2(final String url, final Map<String, String> param, final String videoPath, final OnNetWorkResponse onResponse) {
+        File   file = new File(videoPath);
+        // 添加文件参数
+
+        if (file != null && file.exists()) {
+            postFile(url, new ProgressListener() {
+                @Override
+                public void onProgress(long currentBytes, long contentLength, boolean done) {
+                    String pstr =  "cb:"+currentBytes + "cl："+contentLength + "d:"+done;
+                    Log.d("postVideoForm2", "onProgress: "+pstr);
+                    onResponse.uploadProgress(currentBytes,contentLength,done);
+                }
+            }, new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    onResponse.downfailed(e.toString());
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) {
+                    int code =  response.code();
+                    ResponseBody body = response.body();
+                    if(code == 200){
+                       try {
+                           String bodyString = body.string();
+                           onResponse.downsuccess(bodyString);
+                       }catch (IOException e){
+                           e.printStackTrace();
+
+                       }
+                    }else {
+                        onResponse.downfailed(response.toString());
+                    }
+
+                }
+            }, file);
+        }
+
+    }
+    private static OkHttpClient okHttpClient = new OkHttpClient.Builder().connectTimeout(20000, TimeUnit.MILLISECONDS)
+            .readTimeout(20000,TimeUnit.MILLISECONDS)
+            .writeTimeout(20000, TimeUnit.MILLISECONDS).build();
+    public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+    public static final MediaType MEDIA_TYPE_MARKDOWN = MediaType.parse("text/x-markdown; charset=utf-8");
+    public static void postFile(String url, final ProgressListener listener, okhttp3.Callback callback, File...files){
+
+        MultipartBody.Builder builder = new MultipartBody.Builder();
+        builder.setType(MultipartBody.FORM);
+        Log.i("huang","files[0].getName()=="+files[0].getName());
+        //第一个参数要与Servlet中的一致
+        builder.addFormDataPart("fileName",files[0].getName(), RequestBody.create(MediaType.parse("application/octet-stream"),files[0]));
+
+        MultipartBody multipartBody = builder.build();
+
+        Request request  = new Request.Builder().url(url).post(new ProgressRequestBody(multipartBody,listener)).build();
+        okHttpClient.newCall(request).enqueue(callback);
+    }
+
 
 }

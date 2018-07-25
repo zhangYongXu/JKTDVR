@@ -12,6 +12,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.graphics.BitmapCompat;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
@@ -40,6 +41,7 @@ import com.geeksworld.jktdvr.tools.UploadVideo;
 import com.geeksworld.jktdvr.tools.UriUtils;
 import com.geeksworld.jktdvr.tools.Url;
 import com.geeksworld.jktdvr.viewModel.HomeViewModel;
+import com.geeksworld.jktdvr.views.ProgressDialog;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -61,8 +63,11 @@ public class FragMain3TabContentVideoFragment extends BaseFragment implements Vi
     private static final int RESULT_LOAD_IMAGE = 0003;
     private static final int RESULT_LOAD_VIDEO = 0004;
 
-    private HomeViewModel homeViewModel;
+    private interface OnUploadComplete{
+        void uploadComplete(String url);
+    };
 
+    private HomeViewModel homeViewModel;
 
     private EditText videoTypeEditText;
     private EditText videoNameEditText;
@@ -89,6 +94,8 @@ public class FragMain3TabContentVideoFragment extends BaseFragment implements Vi
     private SurfaceView surfaceView;
     private MediaPlayer player;
     private SurfaceHolder holder;
+
+    private ProgressDialog progressDialog;
 
     public void setHomeViewModel(HomeViewModel homeViewModel) {
         this.homeViewModel = homeViewModel;
@@ -129,6 +136,8 @@ public class FragMain3TabContentVideoFragment extends BaseFragment implements Vi
         share = ShareKey.getShare(getActivity());
         homeItemModel = new HomeItemModel();
         player=new MediaPlayer();
+        progressDialog = new ProgressDialog(getContext());
+        progressDialog.setProgress(0);
     }
 
     @Override
@@ -170,6 +179,8 @@ public class FragMain3TabContentVideoFragment extends BaseFragment implements Vi
         view.findViewById(R.id.videoType).setOnClickListener(this);
         view.findViewById(R.id.videoSubmitButton).setOnClickListener(this);
         view.findViewById(R.id.videoSelectVideoButton).setOnClickListener(this);
+
+        initPlayer();
     }
 
 
@@ -241,6 +252,10 @@ public class FragMain3TabContentVideoFragment extends BaseFragment implements Vi
             Tool.toast(getContext(),"请选择视频封面图片");
             return false;
         }
+        if(Tool.isNull(videoOriginalPath)){
+            Tool.toast(getContext(),"请选择视频");
+            return false;
+        }
         String intro = videoIntroductionEditText.getText().toString();
         if(Tool.isNull(intro)){
             Tool.toast(getContext(),"请输入视频简介");
@@ -249,8 +264,6 @@ public class FragMain3TabContentVideoFragment extends BaseFragment implements Vi
         return true;
     }
     private void postData(){
-
-
         if(!validate()){
             return;
         }
@@ -271,7 +284,20 @@ public class FragMain3TabContentVideoFragment extends BaseFragment implements Vi
         homeItemModel.setVideoTextarea(intro);
         homeItemModel.setVideoUrl("");
 
-
+        uploadPic(homeItemModel, picPath, new OnUploadComplete() {
+            @Override
+            public void uploadComplete(String url) {
+                uploadVideo(homeItemModel, videoPath, new OnUploadComplete() {
+                    @Override
+                    public void uploadComplete(String url) {
+                        saveData(homeItemModel);
+                    }
+                });
+            }
+        });
+    }
+    //上传图片
+    private void uploadPic(final HomeItemModel homeItemModel, String picPath, final OnUploadComplete complete){
         UploadPhoto.postPicForm(Url.postfileUpload, null, picPath, new UploadPhoto.OnNetWorkResponse() {
             @Override
             public void downsuccess(String result) {
@@ -283,47 +309,7 @@ public class FragMain3TabContentVideoFragment extends BaseFragment implements Vi
                         JSONObject result1 = obj.getJSONObject("data");
                         String img_url = result1.getString("imgUrl");
                         homeItemModel.setImgUrl(img_url);
-
-                        UploadVideo.postVideoForm(Url.postfileUpload, null, videoPath, new UploadVideo.OnNetWorkResponse() {
-                            @Override
-                            public void downsuccess(String result) {
-                                try {
-                                    JSONObject obj = new JSONObject(result);
-                                    int code = obj.getInt("code");
-                                    String message = obj.getString("message");
-                                    if (code == 1) {
-                                        JSONObject result1 = obj.getJSONObject("data");
-                                        String img_url = result1.getString("imgUrl");
-                                        homeItemModel.setVideoUrl(img_url);
-                                        homeViewModel.postRequestAddOrEditVRWork(false, homeItemModel, new BaseViewModel.OnRequestDataComplete<List<HomeTagModel>>() {
-                                            @Override
-                                            public void success(List<HomeTagModel> homeTagModels) {
-                                                Tool.toast(getContext(),"VR视频制作成功");
-                                                clearUI();
-                                            }
-
-                                            @Override
-                                            public void failed(String error) {
-                                                Tool.toast(getContext(),"VR视频制作失败");
-                                            }
-                                        });
-                                    }else {
-                                        Tool.toast(getContext(),"上传视频失败,检查网络，请重试");
-                                    }
-                                }catch (JSONException e) {
-                                    e.printStackTrace();
-                                    Tool.toast(getContext(),"上传视频失败,检查网络，请重试");
-                                }
-
-                            }
-
-                            @Override
-                            public void downfailed(String error) {
-                                Tool.toast(getContext(),"上传视频失败,检查网络，请重试");
-                            }
-                        });
-
-
+                        complete.uploadComplete(img_url);
                     }else {
                         Tool.toast(getContext(),"上传视频封面图片失败,检查网络，请重试");
                     }
@@ -332,10 +318,61 @@ public class FragMain3TabContentVideoFragment extends BaseFragment implements Vi
                     Tool.toast(getContext(),"上传视频封面图片失败,检查网络，请重试");
                 }
             }
-
             @Override
             public void downfailed(String error) {
                 Tool.toast(getContext(),"上传视频封面图片失败,检查网络，请重试");
+            }
+        });
+    }
+    //上传视频
+    private void uploadVideo(final HomeItemModel homeItemModel, String videoPath , final OnUploadComplete complete){
+        progressDialog.show();
+        UploadVideo.postVideoForm2(Url.postfileUpload, null, videoPath, new UploadVideo.OnNetWorkResponse() {
+            @Override
+            public void downsuccess(String result) {
+                progressDialog.dismiss();
+                try {
+                    JSONObject obj = new JSONObject(result);
+                    int code = obj.getInt("code");
+                    String message = obj.getString("message");
+                    if (code == 1) {
+                        JSONObject result1 = obj.getJSONObject("data");
+                        String img_url = result1.getString("imgUrl");
+                        homeItemModel.setVideoUrl(img_url);
+                        complete.uploadComplete(img_url);
+                    }else {
+                        Tool.toast(getContext(),"上传视频失败,检查网络，请重试");
+                    }
+                }catch (JSONException e) {
+                    e.printStackTrace();
+                    Tool.toast(getContext(),"上传视频失败,检查网络，请重试");
+                }
+            }
+            @Override
+            public void uploadProgress(long currentBytes, long contentLength, boolean isUploadComplete) {
+                int progress = (int) ((currentBytes / (float) contentLength)*100);
+                Log.i("uploadProgress:",progress+"");
+                progressDialog.setProgress(progress);
+            }
+            @Override
+            public void downfailed(String error) {
+                progressDialog.dismiss();
+                Tool.toast(getContext(),"上传视频失败,检查网络，请重试");
+            }
+        });
+    }
+    //保存数据
+    private void saveData(HomeItemModel homeItemModel){
+        homeViewModel.postRequestAddOrEditVRWork2(false, homeItemModel, new BaseViewModel.OnRequestDataComplete<List<HomeTagModel>>() {
+            @Override
+            public void success(List<HomeTagModel> homeTagModels) {
+                Tool.toast(getContext(),"VR视频制作成功");
+                clearUI();
+            }
+
+            @Override
+            public void failed(String error) {
+                Tool.toast(getContext(),"VR视频制作失败");
             }
         });
     }
@@ -346,6 +383,9 @@ public class FragMain3TabContentVideoFragment extends BaseFragment implements Vi
         picOriginalPath = null;
         videoOriginalPath = null;
         player.pause();
+        videoViewLayout.setVisibility(View.GONE);
+        videoTypeEditText.setText("");
+        videoHomeTagModel = null;
         MainActivity.MainActivityInstance(getActivity()).selectPage(0);
     }
 
@@ -411,7 +451,17 @@ public class FragMain3TabContentVideoFragment extends BaseFragment implements Vi
     @Override
     public void onResume() {
         super.onResume();
-        //videoView.setFocusable(false);
+        if(null != player) {
+            player.start();
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if(null != player) {
+            player.pause();
+        }
     }
 
     @Override
@@ -445,47 +495,64 @@ public class FragMain3TabContentVideoFragment extends BaseFragment implements Vi
         }
     }
 
+    private void initPlayer(){
 
-    private void startPlayer(Uri uri){
-        try {
-            player.setDataSource(getActivity(), uri);
-            holder=surfaceView.getHolder();
-            holder.addCallback(new MyCallBack());
-            player.prepare();
-            player.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                @Override
-                public void onPrepared(MediaPlayer mp) {
-                    // 首先取得video的宽和高
-                    int vWidth = player.getVideoWidth();
-                    int vHeight = player.getVideoHeight();
+        holder=surfaceView.getHolder();
+        holder.addCallback(new MyCallBack());
 
-                    // 该LinearLayout的父容器 android:orientation="vertical" 必须
-                    LinearLayout linearLayout = videoViewLayout;
-                    int lw = linearLayout.getWidth();
-                    int lh = linearLayout.getHeight();
+        player.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mp) {
+                // 首先取得video的宽和高
+                int vWidth = player.getVideoWidth();
+                int vHeight = player.getVideoHeight();
 
-                    if (vWidth > lw || vHeight > lh) {
-                        // 如果video的宽或者高超出了当前屏幕的大小，则要进行缩放
-                        float wRatio = (float) vWidth / (float) lw;
-                        float hRatio = (float) vHeight / (float) lh;
+                // 该LinearLayout的父容器 android:orientation="vertical" 必须
+                LinearLayout linearLayout = videoViewLayout;
+                int lw = linearLayout.getWidth();
+                int lh = linearLayout.getHeight();
 
-                        // 选择大的一个进行缩放
-                        float ratio = Math.max(wRatio, hRatio);
-                        vWidth = (int) Math.ceil((float) vWidth / ratio);
-                        vHeight = (int) Math.ceil((float) vHeight / ratio);
+                if (vWidth > lw || vHeight > lh) {
+                    // 如果video的宽或者高超出了当前屏幕的大小，则要进行缩放
+                    float wRatio = (float) vWidth / (float) lw;
+                    float hRatio = (float) vHeight / (float) lh;
 
-                        // 设置surfaceView的布局参数
-                        LinearLayout.LayoutParams lp= new LinearLayout.LayoutParams(vWidth, vHeight);
-                        lp.gravity = Gravity.CENTER;
-                        surfaceView.setLayoutParams(lp);
-                    }
+                    // 选择大的一个进行缩放
+                    float ratio = Math.max(wRatio, hRatio);
+                    vWidth = (int) Math.ceil((float) vWidth / ratio);
+                    vHeight = (int) Math.ceil((float) vHeight / ratio);
 
-                    player.start();
-                    player.setLooping(true);
+                    // 设置surfaceView的布局参数
+                    LinearLayout.LayoutParams lp= new LinearLayout.LayoutParams(vWidth, vHeight);
+                    lp.gravity = Gravity.CENTER;
+                    surfaceView.setLayoutParams(lp);
                 }
-            });
+
+                player.start();
+                player.setLooping(true);
+            }
+        });
+
+    }
+    private void startPlayer(Uri uri){
+
+        try {
+            if(player != null){
+                player.stop();
+                player.reset();
+                player.release();
+                player = null;
+            }
+            player = new MediaPlayer();
+            initPlayer();
+
+            player.setDataSource(getActivity(), uri);
+            player.prepare();
+
         } catch (IOException e) {
             e.printStackTrace();
+        }catch (IllegalStateException e1){
+            e1.printStackTrace();
         }
     }
     private class MyCallBack implements SurfaceHolder.Callback {
@@ -503,5 +570,13 @@ public class FragMain3TabContentVideoFragment extends BaseFragment implements Vi
         public void surfaceDestroyed(SurfaceHolder holder) {
 
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        player.stop();
+        player.release();
+        player = null;
     }
 }

@@ -101,6 +101,16 @@ public class VRWorkEditTabContentPicFragment extends BaseFragment implements Vie
         super.initData();
         glide = Glide.with(this);
         share = ShareKey.getShare(getActivity());
+
+        for(HomeTagModel model : homeViewModel.getAllTagList()){
+            if(!Tool.isNull(model.getDataDicValue())){
+                int dataDicValue = Integer.parseInt(model.getDataDicValue());
+                if(dataDicValue == homeItemModel.getClassVal()){
+                    picHomeTagModel = model;
+                    break;
+                }
+            }
+        }
     }
 
     @Override

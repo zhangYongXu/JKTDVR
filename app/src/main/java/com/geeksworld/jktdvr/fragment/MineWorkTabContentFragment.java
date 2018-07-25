@@ -171,7 +171,10 @@ public class MineWorkTabContentFragment extends BaseFragment {
 
             @Override
             public void failed(String error) {
-                homeTagModel.getHomeTagDataModel().getDataList().clear();
+                if(homeTagModel.getHomeTagDataModel().getPageNumber() == 1){
+                    homeTagModel.getHomeTagDataModel().getDataList().clear();
+                }
+
                 itemAdapter.notifyDataSetChanged();
                 refreshView.finishRefresh();
                 refreshView.finishLoadmore();

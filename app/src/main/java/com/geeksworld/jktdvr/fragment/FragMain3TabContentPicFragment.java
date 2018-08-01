@@ -4,6 +4,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -13,6 +15,7 @@ import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +25,9 @@ import android.widget.ListView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
 import com.geeksworld.jktdvr.R;
 import com.geeksworld.jktdvr.aBase.BaseViewModel;
 import com.geeksworld.jktdvr.activity.LoginActivity;
@@ -34,7 +40,9 @@ import com.geeksworld.jktdvr.model.HomeTagModel;
 import com.geeksworld.jktdvr.tools.ShareKey;
 import com.geeksworld.jktdvr.tools.Tool;
 import com.geeksworld.jktdvr.tools.UploadPhoto;
+import com.geeksworld.jktdvr.tools.UriUtils;
 import com.geeksworld.jktdvr.tools.Url;
+import com.geeksworld.jktdvr.tools.Utils;
 import com.geeksworld.jktdvr.viewModel.HomeViewModel;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
@@ -311,9 +319,30 @@ public class FragMain3TabContentPicFragment extends BaseFragment implements View
             cursor.moveToFirst();
             int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
             String picturePath = cursor.getString(columnIndex);
-            picOriginalPath = picturePath;
+
             cursor.close();
 
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;//这个参数设置为true才有效，
+
+            Bitmap bmp = BitmapFactory.decodeFile(picturePath,options);//这里的bitmap是个空
+            if(bmp==null){
+                Log.e("通过options获取到的bitmap为空","===");
+            }
+
+            int outWidth= options.outWidth;
+            int outHeight=options.outHeight;
+            if(outWidth/2 != outHeight){
+                Tool.toast(getContext(),"图片必须是宽高比为2:1的全景图片");
+                return;
+            }
+            if(outHeight<640){
+                Tool.toast(getContext(),"图片分辨率最小为 宽1280px 高640px");
+                return;
+            }
+
+
+            picOriginalPath = picturePath;
             glide.load(new File(picOriginalPath)).into(showImageView);
         }
     }

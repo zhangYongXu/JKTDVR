@@ -1,5 +1,7 @@
 apply plugin: 'com.android.application'
-
+def releaseTime() {
+    return new Date().format("yyyy-MM-dd", TimeZone.getTimeZone("UTC"))
+}
 android {
     compileSdkVersion 26
     buildToolsVersion "25.0.0"
@@ -31,6 +33,30 @@ android {
     }
 
     useLibrary 'org.apache.http.legacy'
+
+    productFlavors{
+        jktd{}
+        tengxun{}
+        xiaomi{}
+        huawei{}
+        sanliuling{}
+        pugongying{}
+        all{}
+    }
+
+
+    android.applicationVariants.all { variant ->
+        variant.outputs.each { output ->
+            def outputFile = output.outputFile
+            if (outputFile != null && outputFile.name.endsWith('.apk')) {
+                //这里修改apk文件名
+                def fileName = "jktdvr_${variant.productFlavors[0].name}-${defaultConfig.versionCode}-${defaultConfig.versionName}-${releaseTime() }_"  + buildType.name + ".apk"
+                //def fileName = outputFile.name.replace("app", "${rootProject.ext.appName}-${releaseTime()}-${defaultConfig.versionCode}-${defaultConfig.versionName}")
+
+                output.outputFile = new File(outputFile.parent, fileName)
+            }
+        }
+    }
 }
 
 dependencies {

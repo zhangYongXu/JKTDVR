@@ -4,6 +4,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
@@ -476,21 +479,46 @@ public class FragMain3TabContentVideoFragment extends BaseFragment implements Vi
             cursor.moveToFirst();
             int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
             String picturePath = cursor.getString(columnIndex);
-            picOriginalPath = picturePath;
             cursor.close();
 
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;//这个参数设置为true才有效，
+            Bitmap bmp = BitmapFactory.decodeFile(picturePath,options);//这里的bitmap是个空
+            if(bmp==null){
+                Log.e("通过options获取到的bitmap为空","===");
+            }
+
+            int outWidth= options.outWidth;
+            int outHeight=options.outHeight;
+            if(outWidth/2 != outHeight){
+                Tool.toast(getContext(),"视频封面图片必须是宽高比为2:1的图片");
+                return;
+            }
+
+            picOriginalPath = picturePath;
             glide.load(new File(picOriginalPath)).into(showImageView);
         }else if(requestCode == RESULT_LOAD_VIDEO && resultCode == getActivity().RESULT_OK && null != data){
             Uri uri = data.getData();
 
             String videoPath = UriUtils.getPath(getContext(),uri);
 
+
+            MediaMetadataRetriever retr = new MediaMetadataRetriever();
+            retr.setDataSource(getContext() , uri);
+            Bitmap bm = retr.getFrameAtTime(0,MediaMetadataRetriever.OPTION_CLOSEST_SYNC);
+
+            int wVideo = bm.getWidth();
+            int hVideo = bm.getHeight();
+            if(wVideo/2 != hVideo){
+                Tool.toast(getContext(),"视频必须是宽高比为2:1的全景视频");
+                return;
+            }
+            if(hVideo<640){
+                Tool.toast(getContext(),"视频分辨率最小为 宽1280px 高640px");
+                return;
+            }
             videoOriginalPath = videoPath;
-
             videoViewLayout.setVisibility(View.VISIBLE);
-
-
-
             startPlayer(uri);
         }
     }

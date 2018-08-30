@@ -65,6 +65,14 @@
         <activity android:name=".activity.HeadIconActivity" android:screenOrientation="portrait"></activity>
         <activity android:name=".activity.CommentListActivity" android:screenOrientation="portrait"></activity>
         <activity android:name=".activity.PublishCommentActivity" android:screenOrientation="portrait"></activity>
+
+        <!--微信-->
+        <activity
+            android:name=".wxapi.WXEntryActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
     </application>
 
 </manifest>

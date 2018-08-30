@@ -54,6 +54,7 @@ public class PlayerActivity extends Activity implements UVPlayerCallBack, VideoC
         //将工具条的显示或隐藏交个SDK管理，也可自己管理
         RelativeLayout rlToolbar = (RelativeLayout) findViewById(R.id.activity_rlToolbar);
         mMediaplayer.setToolbar(rlToolbar, null, imgBack);
+        mMediaplayer.setToolbar(rlToolbar, null, imgShare);
         mCtrl = new VideoController(rlToolbar, this, true);
         changeOrientation(false);
         activity = this;

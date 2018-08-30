@@ -73,6 +73,14 @@
             android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
+
+        <meta-data
+            android:name="UMENG_APPKEY"
+            android:value="592e5740f29d983edf000edd">
+        </meta-data>
+        <meta-data
+            android:name="UMENG_CHANNEL"
+            android:value="tenxun" />
     </application>
 
 </manifest>

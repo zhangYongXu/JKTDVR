@@ -103,8 +103,8 @@ public class RecyclerCommentViewItemAdapter extends RecyclerView.Adapter {
             String imgUrl = list.get(position).getHeadImg();
             Glide.with(context)
                     .load(imgUrl)
-                    .error(R.mipmap.image_default_16_9)
-                    .fallback(R.mipmap.image_default_16_9)
+                    .error(R.mipmap.mine_head_default)
+                    .fallback(R.mipmap.mine_head_default)
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .skipMemoryCache(true)
                     .override(metrics.widthPixels, metrics.widthPixels * 9 / 16)

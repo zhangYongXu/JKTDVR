@@ -5,7 +5,7 @@
     android:orientation="vertical"
     android:background="@color/white">
 
-    <com.guoyu.peter.views.RoundImageView
+    <com.geeksworld.jktdvr.views.RoundImageView
         android:id="@+id/display_headIcon"
         android:layout_width="150dp"
         android:layout_height="150dp"

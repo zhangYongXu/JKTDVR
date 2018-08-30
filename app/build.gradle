@@ -4,7 +4,7 @@ def releaseTime() {
 }
 android {
     compileSdkVersion 26
-    buildToolsVersion "25.0.0"
+    buildToolsVersion '26.0.2'
     defaultConfig {
         applicationId "com.geeksworld.jktdvr"
         minSdkVersion 16
@@ -34,6 +34,7 @@ android {
 
     useLibrary 'org.apache.http.legacy'
 
+    /*
     productFlavors{
         jktd{}
         tengxun{}
@@ -43,8 +44,9 @@ android {
         pugongying{}
         all{}
     }
+    */
 
-
+/*
     android.applicationVariants.all { variant ->
         variant.outputs.each { output ->
             def outputFile = output.outputFile
@@ -57,6 +59,7 @@ android {
             }
         }
     }
+    */
 }
 
 dependencies {

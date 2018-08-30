@@ -1,7 +1,9 @@
 package com.geeksworld.jktdvr.activity;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.View;
@@ -16,6 +18,7 @@ import com.geeksworld.jktdvr.aBase.BaseViewModel;
 import com.geeksworld.jktdvr.model.CommentItemModel;
 import com.geeksworld.jktdvr.model.HomeItemModel;
 import com.geeksworld.jktdvr.tools.Common;
+import com.geeksworld.jktdvr.tools.ShareKey;
 import com.geeksworld.jktdvr.tools.Tool;
 import com.geeksworld.jktdvr.viewModel.CommentViewModel;
 
@@ -27,6 +30,7 @@ public class PublishCommentActivity extends BaseActivity {
     private EditText contentEditText;
     private Button saveButton;
     private Activity activity;
+    private SharedPreferences share;
     private HomeItemModel homeItemModel;
     private CommentViewModel commentViewModel;
     @Override
@@ -61,6 +65,7 @@ public class PublishCommentActivity extends BaseActivity {
         activity = this;
         homeItemModel = (HomeItemModel) getIntent().getSerializableExtra(HomeItemModel.SerializableKey);
         commentViewModel = new CommentViewModel(this,this);
+        share = ShareKey.getShare(activity);
     }
 
     @Override
@@ -77,7 +82,28 @@ public class PublishCommentActivity extends BaseActivity {
         });
     }
 
+    private void tipLogin(){
+        new android.app.AlertDialog.Builder(activity).setMessage("请先登录!")
+                .setPositiveButton("确认", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Intent intent = new Intent();
+                        intent.setClass(activity, LoginActivity.class);
+                        startActivity(intent);
+                    }
+                }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+            }
+        }).show();
+    }
     private boolean validate(){
+        boolean isLogin = share.getBoolean(ShareKey.ISLOGIN, false);
+        if (!isLogin) {
+            tipLogin();
+            return false;
+        }
         if(Tool.isNull(contentEditText.getText().toString())){
             Tool.toast(activity,"请输入内容");
             return false;

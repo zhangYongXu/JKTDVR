@@ -22,6 +22,11 @@ import com.scwang.smartrefresh.layout.api.RefreshHeader;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.footer.ClassicsFooter;
 import com.scwang.smartrefresh.layout.header.ClassicsHeader;
+import com.umeng.commonsdk.UMConfigure;
+import com.umeng.socialize.Config;
+import com.umeng.socialize.PlatformConfig;
+import com.umeng.socialize.UMShareAPI;
+
 import org.json.JSONObject;
 
 import java.util.Map;
@@ -65,7 +70,7 @@ public class BaseApplication extends Application {
         //上下拉刷新组件效果初始化
         initRefresh();
 
-
+        initUmeng();
 
     }
 
@@ -77,7 +82,7 @@ public class BaseApplication extends Application {
     }
 
     private void initRefresh() {
-        ClassicsHeader.REFRESH_HEADER_RELEASE = "教育大数据";
+        ClassicsHeader.REFRESH_HEADER_RELEASE = "极客天地VR自生成";
         //设置全局的Header构建器
         SmartRefreshLayout.setDefaultRefreshHeaderCreater(new DefaultRefreshHeaderCreater() {
             @Override
@@ -97,7 +102,23 @@ public class BaseApplication extends Application {
         });
     }
 
+    private void initUmeng(){
+        UMShareAPI.get(this);//初始化sdk
+        //开启debug模式，方便定位错误，具体错误检查方式可以查看http://dev.umeng.com/social/android/quick-integration的报错必看，正式发布，请关闭该模式
+        Config.DEBUG = true;
 
+        UMConfigure.init(this,UMConfigure.DEVICE_TYPE_PHONE,"0e3157ad45aa58dabd6c9168480e56d0");
+        UMConfigure.setLogEnabled(true);
+
+    }
+    //各个平台的配置
+    {
+        //微信
+        PlatformConfig.setWeixin(ShareKey.WX_ID, ShareKey.WX_SECRET);
+        //QQ
+        //PlatformConfig.setQQZone(ShareKey.QQ_ID, "HXIjrC4lICtvdsgz");
+
+    }
 
 
 }

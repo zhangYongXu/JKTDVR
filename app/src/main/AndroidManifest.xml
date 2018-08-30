@@ -62,6 +62,9 @@
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen"></activity>
 
+        <activity android:name=".activity.HeadIconActivity" android:screenOrientation="portrait"></activity>
+        <activity android:name=".activity.CommentListActivity" android:screenOrientation="portrait"></activity>
+        <activity android:name=".activity.PublishCommentActivity" android:screenOrientation="portrait"></activity>
     </application>
 
 </manifest>

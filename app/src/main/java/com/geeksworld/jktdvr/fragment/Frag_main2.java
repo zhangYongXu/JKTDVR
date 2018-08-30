@@ -92,12 +92,7 @@ public class Frag_main2 extends BaseFragment{
                 if(model.getType() == HomeItemModel.HomeItemModelContentTypePicture){
                     Intent intent = new Intent();
                     intent.setClass(getActivity(), PageWebActivity.class);
-                    String url = Url.BASE_HOST ;
-                    if(model.getType() == HomeItemModel.HomeItemModelContentTypePicture){
-                        url = url + "pub/webvrIndex?picUrl=" + model.getImgUrl();
-                    }else {
-                        url = url + "/pub/webvrPlayer?picUrl=" + model.getVideoUrl();
-                    }
+                    String url = model.getShowUrl();
                     intent.putExtra(PageWebActivity.INTENT_EXTRA_URL_KEY,url);
                     startActivity(intent);
                 }else {

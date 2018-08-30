@@ -1,6 +1,5 @@
 package com.geeksworld.jktdvr.activity;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
@@ -15,9 +14,8 @@ import android.widget.TextView;
 import com.geeksworld.jktdvr.R;
 import com.geeksworld.jktdvr.aBase.BaseActivity;
 import com.geeksworld.jktdvr.aBase.BaseViewModel;
-import com.geeksworld.jktdvr.fragment.MineWorkTabContentFragment;
 import com.geeksworld.jktdvr.fragment.VRWorkEditTabContentPicFragment;
-import com.geeksworld.jktdvr.fragment.VRWorkTabContentVideoFragment;
+import com.geeksworld.jktdvr.fragment.VRWorkEditTabContentVideoFragment;
 import com.geeksworld.jktdvr.model.HomeItemModel;
 import com.geeksworld.jktdvr.model.HomeTagModel;
 import com.geeksworld.jktdvr.tools.Common;
@@ -137,7 +135,7 @@ public class VRWorkEditActivity extends BaseActivity{
         tabFragments.add(picF);
 
 
-        VRWorkTabContentVideoFragment videoF = VRWorkTabContentVideoFragment.newInstance(homeViewModel,homeItemModel);
+        VRWorkEditTabContentVideoFragment videoF = VRWorkEditTabContentVideoFragment.newInstance(homeViewModel,homeItemModel);
         tabFragments.add(videoF);
 
         contentAdapter = new VRWorkEditActivity.ContentPagerAdapter(getSupportFragmentManager());

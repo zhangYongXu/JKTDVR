@@ -53,7 +53,7 @@ public class UserViewModel extends BaseViewModel {
         currentUserModel.setNick_name(nick);
         currentUserModel.setEmail(email);
         currentUserModel.setBirth(birth);
-        currentUserModel.setImg_url(img_url);
+        currentUserModel.setHeadImg(img_url);
         currentUserModel.setSex(sex);
     }
 
@@ -273,7 +273,7 @@ email（邮箱号）
                         share.edit().putString(ShareKey.NICK, userModel.getNick_name()).commit();
                         share.edit().putString(ShareKey.EMAIL, userModel.getEmail()).commit();
                         share.edit().putString(ShareKey.SEX, userModel.getSex()).commit();
-                        share.edit().putString(ShareKey.IMG_URL, userModel.getImg_url()).commit();
+                        share.edit().putString(ShareKey.IMG_URL, userModel.getHeadImg()).commit();
                         if(null != complete){
                             currentUserModel = userModel;
                             complete.success(userModel);

@@ -107,7 +107,12 @@ public class PersonInfoActivity extends BaseActivity implements View.OnClickList
         headImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                Intent intent = new Intent();
+                intent.setClass(PersonInfoActivity.this, HeadIconActivity.class);
+                if (userViewModel.getCurrentUserModel() != null) {
+                    intent.putExtra("head_img", userViewModel.getCurrentUserModel().getHeadImg());
+                }
+                startActivityForResult(intent, REQUESTCODE_REFRESH);
             }
         });
 
@@ -149,8 +154,8 @@ public class PersonInfoActivity extends BaseActivity implements View.OnClickList
         userViewModel.postRequestUserInfo(u_id_str, new BaseViewModel.OnRequestDataComplete<UserModel>() {
             @Override
             public void success(UserModel userModel) {
-                if (!Tool.isNull(userModel.getImg_url()) && PersonInfoActivity.this != null)
-                    Glide.with(PersonInfoActivity.this).load(userModel.getImg_url()).into(headImageView);
+                if (!Tool.isNull(userModel.getHeadImg()) && PersonInfoActivity.this != null)
+                    Glide.with(PersonInfoActivity.this).load(userModel.getHeadImg()).into(headImageView);
                 nicknameEditText.setText(userModel.getNick_name());
                 nicknameTextView.setText(userModel.getNick_name());
 

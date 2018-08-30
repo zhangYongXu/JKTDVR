@@ -56,6 +56,14 @@ public class PageWebActivity extends BaseActivity {
             }
         });
 
+        inTitle.findViewById(R.id.title_img_right).setVisibility(View.VISIBLE);
+        inTitle.findViewById(R.id.title_img_right).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Common.showPopShare(activity,view,activity,url);
+            }
+        });
+
         RelativeLayout topStatusViewRelativeLayout = (RelativeLayout) findViewById(R.id.navigationTopStatueBgViewLayout);
         Common.hasNotchHandleNavigationStatusBg(this,topStatusViewRelativeLayout);
 

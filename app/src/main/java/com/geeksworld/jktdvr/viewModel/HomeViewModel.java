@@ -8,6 +8,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.geeksworld.jktdvr.aBase.BaseViewModel;
 import com.geeksworld.jktdvr.model.HomeItemModel;
 import com.geeksworld.jktdvr.model.HomeTagModel;
+import com.geeksworld.jktdvr.model.UserModel;
 import com.geeksworld.jktdvr.tools.HttpUtil;
 import com.geeksworld.jktdvr.tools.ShareKey;
 import com.geeksworld.jktdvr.tools.Tool;
@@ -295,6 +296,93 @@ public class HomeViewModel extends BaseViewModel {
                     if (code == 1) {
                         if(null != complete){
                             complete.success(allTagList);
+                        }
+                    }
+                    else {
+                        Tool.toast(getActivity(), message);
+                        if(null != complete){
+                            complete.failed(message);
+                        }
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    if(null != complete){
+                        complete.failed(e.toString());
+                    }
+                }
+            }
+
+            @Override
+            public void downfailed(String error) {
+                if(null != complete){
+                    complete.failed(error);
+                }
+            }
+        });
+    }
+
+    //点赞全景作品
+    public void postRequestVRZanVRWork(final HomeItemModel homeItemModel, final OnRequestDataComplete<HomeItemModel> complete ) {
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("imgId", homeItemModel.getId()+"" );
+        map.put("flag", "1" );
+
+        HttpUtil.requestPostNetWork(Url.postVRzan, Tool.getParams(getActivity(), map), new HttpUtil.OnNetWorkResponse() {
+            @Override
+            public void downsuccess(String result) {
+                try {
+                    JSONObject obj = new JSONObject(result);
+                    int code = obj.getInt("code");
+                    String message = obj.getString("message");
+                    if (code == 1) {
+                        homeItemModel.setDz(homeItemModel.getDz()+1);
+                        if(null != complete){
+                            complete.success(homeItemModel);
+                        }
+                    }
+                    else {
+                        Tool.toast(getActivity(), message);
+                        if(null != complete){
+                            complete.failed(message);
+                        }
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    if(null != complete){
+                        complete.failed(e.toString());
+                    }
+                }
+            }
+
+            @Override
+            public void downfailed(String error) {
+                if(null != complete){
+                    complete.failed(error);
+                }
+            }
+        });
+    }
+    //查询全景作品
+    public void postRequestFindByIdVRWork(final HomeItemModel homeItemModel, final OnRequestDataComplete<HomeItemModel> complete ) {
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("id", homeItemModel.getId()+"" );
+
+        HttpUtil.requestPostNetWork(Url.postVRFindById, Tool.getParams(getActivity(), map), new HttpUtil.OnNetWorkResponse() {
+            @Override
+            public void downsuccess(String result) {
+                try {
+                    JSONObject obj = new JSONObject(result);
+                    int code = obj.getInt("code");
+                    String message = obj.getString("message");
+                    if (code == 1) {
+                        JSONObject result1 = obj.getJSONObject("data");
+
+                        HomeItemModel homeItemModel1 = JSONArray.parseObject(result1.toString(), HomeItemModel.class);
+                        homeItemModel.setDz(homeItemModel1.getDz());
+                        homeItemModel.setBrowsing(homeItemModel1.getBrowsing());
+                        homeItemModel.setCommentNum(homeItemModel1.getCommentNum());
+                        if(null != complete){
+                            complete.success(homeItemModel1);
                         }
                     }
                     else {

@@ -12,11 +12,13 @@ import android.view.ViewGroup;
 import com.geeksworld.jktdvr.R;
 import com.geeksworld.jktdvr.aBase.BaseViewModel;
 
+import com.geeksworld.jktdvr.activity.CommentListActivity;
 import com.geeksworld.jktdvr.activity.PageWebActivity;
 import com.geeksworld.jktdvr.activity.PlayerActivity;
 import com.geeksworld.jktdvr.adapter.RecyclerMainFrag0ViewItemAdapter;
 import com.geeksworld.jktdvr.model.HomeItemModel;
 import com.geeksworld.jktdvr.model.HomeTagModel;
+import com.geeksworld.jktdvr.tools.Tool;
 import com.geeksworld.jktdvr.tools.Url;
 import com.geeksworld.jktdvr.viewModel.HomeViewModel;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
@@ -101,12 +103,8 @@ public class FragMain0TabContentFragment extends BaseFragment {
                 if(model.getType() == HomeItemModel.HomeItemModelContentTypePicture){
                     Intent intent = new Intent();
                     intent.setClass(getActivity(), PageWebActivity.class);
-                    String url = Url.BASE_HOST ;
-                    if(model.getType() == HomeItemModel.HomeItemModelContentTypePicture){
-                        url = url + "pub/webvrIndex?picUrl=" + model.getImgUrl();
-                    }else {
-                        url = url + "/pub/webvrPlayer?picUrl=" + model.getVideoUrl();
-                    }
+                    String url = model.getShowUrl() ;
+
                     intent.putExtra(PageWebActivity.INTENT_EXTRA_URL_KEY,url);
                     startActivity(intent);
                 }else {
@@ -118,8 +116,48 @@ public class FragMain0TabContentFragment extends BaseFragment {
 
             }
         });
-    }
 
+        itemAdapter.setItemBtnClickListener(new RecyclerMainFrag0ViewItemAdapter.OnItemBtnClickListener() {
+            @Override
+            public void onItemDianZanBtnClick(final int position) {
+                HomeItemModel model = itemAdapter.getItem(position);
+                homeViewModel.postRequestVRZanVRWork(model, new BaseViewModel.OnRequestDataComplete<HomeItemModel>() {
+                    @Override
+                    public void success(HomeItemModel homeItemModel) {
+                        Tool.toast(getContext(),"点赞成功");
+                        refreshItemData(position,homeItemModel);
+                    }
+
+                    @Override
+                    public void failed(String error) {
+
+                    }
+                });
+            }
+
+            @Override
+            public void onItemCommentBtnClick(int position) {
+                HomeItemModel model = itemAdapter.getItem(position);
+                Intent intent = new Intent();
+                intent.setClass(getActivity(), CommentListActivity.class);
+                intent.putExtra(HomeItemModel.SerializableKey,model);
+                startActivity(intent);
+            }
+        });
+    }
+    private void refreshItemData(final int position, HomeItemModel homeItemModel){
+        homeViewModel.postRequestFindByIdVRWork(homeItemModel, new BaseViewModel.OnRequestDataComplete<HomeItemModel>() {
+            @Override
+            public void success(HomeItemModel homeItemModel) {
+                itemAdapter.notifyItemChanged(position);
+            }
+
+            @Override
+            public void failed(String error) {
+
+            }
+        });
+    }
     private void loadData() {
         homeViewModel.postRequestTagDataListData(false,homeTagModel,"",HomeItemModel.HomeItemModelContentTypeAll, new BaseViewModel.OnRequestDataComplete<HomeTagModel>() {
             @Override
@@ -153,5 +191,10 @@ public class FragMain0TabContentFragment extends BaseFragment {
             homeTagModel.getHomeTagDataModel().setPageNumber(homeTagModel.getHomeTagDataModel().getPageNumber()+1);
             loadData();
         }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }

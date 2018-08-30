@@ -19,7 +19,7 @@ import com.geeksworld.jktdvr.tools.Tool;
 
 public class UserModel extends BaseModel {
     private int id;// "2",
-    private String img_url;// "http://oy45jwxyl.bkt.clouddn.com/4",
+    private String headImg;// "http://oy45jwxyl.bkt.clouddn.com/4",
     private String nick_name;// "李四",
     private String email;
     private String regist_time;
@@ -40,12 +40,12 @@ public class UserModel extends BaseModel {
         return id;
     }
 
-    public void setImg_url(String img_url) {
-        this.img_url = img_url;
+    public void setHeadImg(String headImg) {
+        this.headImg = headImg;
     }
 
-    public String getImg_url() {
-        return img_url;
+    public String getHeadImg() {
+        return headImg;
     }
 
     public void setNick_name(String nick_name) {

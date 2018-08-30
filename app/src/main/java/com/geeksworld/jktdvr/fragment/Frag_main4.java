@@ -102,8 +102,8 @@ public class Frag_main4 extends BaseFragment implements View.OnClickListener{
         userViewModel.postRequestUserInfo(u_id, new BaseViewModel.OnRequestDataComplete<UserModel>() {
             @Override
             public void success(UserModel userModel) {
-                if (!Tool.isNull(userModel.getImg_url()) && getActivity() != null) {
-                    Glide.with(getActivity()).load(userModel.getImg_url()).into(headImageView);
+                if (!Tool.isNull(userModel.getHeadImg()) && getActivity() != null) {
+                    Glide.with(getActivity()).load(userModel.getHeadImg()).into(headImageView);
                  }
                 nicknameTextView.setText(userModel.getNick_name());
 

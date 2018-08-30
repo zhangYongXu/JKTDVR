@@ -13,8 +13,8 @@ public class ShareKey {
         return context.getSharedPreferences("EduBigData", Context.MODE_PRIVATE);
     }
 
-    public static final String WX_ID = "wxc5793a478fd9713d";
-    public static final String WX_SECRET = "b3f5a3b2b953c9f5e9c4961fa5609319";
+    public static final String WX_ID = "wx7685ef5fca572bf4";
+    public static final String WX_SECRET = "a3cee2bb4efc6e9fe1346c625d99e989";
     public static final String QQ_ID = "1106110659";
     public static final String HX_Appkey = "1444171124068855#kefuchannelapp49752";
     public static final String HX_Client_ID = "YXA6MzcooND0Eee1fV0zmX8NNQ";

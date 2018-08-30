@@ -28,7 +28,6 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.geeksworld.jktdvr.R;
 import com.geeksworld.jktdvr.aBase.BaseViewModel;
 import com.geeksworld.jktdvr.activity.LoginActivity;
-import com.geeksworld.jktdvr.activity.MainActivity;
 import com.geeksworld.jktdvr.model.HomeItemModel;
 import com.geeksworld.jktdvr.model.HomeTagModel;
 import com.geeksworld.jktdvr.tools.ShareKey;
@@ -51,7 +50,7 @@ import java.util.List;
  * Created by xhs on 2018/4/2.
  */
 
-public class VRWorkTabContentVideoFragment extends BaseFragment implements View.OnClickListener{
+public class VRWorkEditTabContentVideoFragment extends BaseFragment implements View.OnClickListener{
 
     private interface OnUploadComplete{
         void uploadComplete(String url);
@@ -102,8 +101,8 @@ public class VRWorkTabContentVideoFragment extends BaseFragment implements View.
         this.homeTagModel = homeTagModel;
     }
 
-    public static VRWorkTabContentVideoFragment newInstance(HomeViewModel inhomeViewModel,HomeItemModel homeItemModel) {
-        VRWorkTabContentVideoFragment newFragment = new VRWorkTabContentVideoFragment();
+    public static VRWorkEditTabContentVideoFragment newInstance(HomeViewModel inhomeViewModel, HomeItemModel homeItemModel) {
+        VRWorkEditTabContentVideoFragment newFragment = new VRWorkEditTabContentVideoFragment();
         newFragment.setHomeViewModel(inhomeViewModel);
         newFragment.setHomeItemModel(homeItemModel);
         return newFragment;

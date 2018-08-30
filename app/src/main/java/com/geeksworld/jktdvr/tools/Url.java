@@ -73,7 +73,7 @@ public class Url {
     /*9)修改用户头像
         *  "uid":3
         * */
-    public static final String completeUserHeadImg = HOST + "user/updateUserHeadImg" +URLSuffix;
+    public static final String completeUserHeadImg = HOST + "user/fileUpload" +URLSuffix;
 
 
     public static final String postfileUpload = HOST + "img/fileUpload" +URLSuffix;
@@ -83,6 +83,9 @@ public class Url {
 
     public static final String postVRdelete = HOST + "img/delete" +URLSuffix;
 
+    public static final String postVRzan = HOST + "img/zan" +URLSuffix;
+
+    public static final String postVRFindById = HOST + "img/findById" +URLSuffix;
 
     /*9)获取首页数据
         *  "page":"1"//第几页
@@ -121,6 +124,14 @@ public class Url {
         "dataDicValue":"article": //父类别的值，这里值传article
            * */
     public static final String getHomeAllTag = HOST +"dataDic/dataDicListByKeyName" + URLSuffix;
+
+    /*11)查询评论列表接口
+           * */
+    public static final String getCommentList = HOST +"comment/list" + URLSuffix;
+    /*12)评论提交
+           * */
+    public static final String commentSaveComment = HOST +"comment/saveComment" + URLSuffix;
+
     /*21)请求发布列表
     "page":"3"//第几页
     "rows":"3"//每页记录数

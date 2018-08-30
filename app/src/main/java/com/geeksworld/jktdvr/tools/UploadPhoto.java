@@ -79,7 +79,7 @@ public class UploadPhoto {
                                 returnBtm = ImageUtil.rotateBitmapByDegree(srcBtm, degree);
                                 try {
                                     FileOutputStream out = new FileOutputStream(f);
-                                    entity.addPart("image", new FileBody(f));
+                                    entity.addPart("fileName", new FileBody(f));
                                     returnBtm.compress(Bitmap.CompressFormat.PNG, 40, out);
                                     out.flush();
                                     out.close();

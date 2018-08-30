@@ -28,12 +28,8 @@ import java.io.File;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
+import com.umeng.socialize.bean.SHARE_MEDIA;
 
-//import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
-//import com.tencent.mm.opensdk.modelmsg.WXMediaMessage;
-//import com.tencent.mm.opensdk.modelmsg.WXWebpageObject;
-//import com.tencent.mm.opensdk.openapi.IWXAPI;
-//import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 
 /**
  * Created by xhs on 2017/12/3.
@@ -47,13 +43,13 @@ public class Common {
      */
 
     public static void shareToWX(final Activity activity,final Context context, final String url, final String title, final String decribe, String imgUrl, final boolean isTimeLineCb) {
-        //UmengShareUtils.shareWeb(activity, url, title, decribe, imgUrl, R.mipmap.ic_launcher, SHARE_MEDIA.WEIXIN);
+        UmengShareUtils.shareWeb(activity, url, title, decribe, imgUrl, R.mipmap.ic_launcher, SHARE_MEDIA.WEIXIN);
     }
     /**
      * 分享到微信朋友圈
      */
     public static void shareToWXCircle(final Activity activity,final Context context, final String url, final String title, final String decribe, String imgUrl, final boolean isTimeLineCb) {
-        //UmengShareUtils.shareWeb(activity, url, title, decribe, imgUrl, R.mipmap.ic_launcher, SHARE_MEDIA.WEIXIN_CIRCLE);
+        UmengShareUtils.shareWeb(activity, url, title, decribe, imgUrl, R.mipmap.ic_launcher, SHARE_MEDIA.WEIXIN_CIRCLE);
     }
 
     public static final int IMAGE_LENGTH_LIMIT = 6291456;
@@ -80,26 +76,23 @@ public class Common {
         //UmengShareUtils.shareWeb(activity, url, title, describe, imgUrl, R.mipmap.ic_launcher, SHARE_MEDIA.QQ);
     }
 
-    /*展现分享选择  Common.showPopShare(view, this, "url", "title", "describe", "imgUrl");*/
-//    public static void showPopShare(Activity activity,View view, final Context context, final String url1, final String title1, final String describe1, final String imgUrl1) {
-//        final String url = "http://geeksworld.cn/";
-//        final String title = "教育大数据";
-//        final String describe = "这是教育大数据的分享";
-//        final String imgUrl = "http://ozdzph0kd.bkt.clouddn.com/搞笑视频71511579990.jpg";
-//       // getShareData(view, context);
-//
-//        //测试
-//        share(activity,context,view,url,title,describe,imgUrl);
-//
-//    }
 
+
+    public static void showPopShare(Activity activity, View view, final Context context, String shareContentUrl){
+        String url = shareContentUrl;
+        final String title = "极客天地VR自生成平台";
+        String describe = "";
+        final String imgUrl = null;
+
+        share(activity,context,view,url,title,describe,imgUrl);
+    }
     public static void showPopShare(Activity activity, View view, final Context context, HomeItemModel homeItemModel){
-         String url = "http://jydsj.chinaecdc.com/home/downLoadShare";
-         final String title = "教育大数据";
-         String describe = "欢迎使用教育大数据APP，点击进入下载页!";
-         final String imgUrl = "http://jydsj.chinaecdc.com/static/package/shareImage.png";
+         String url = homeItemModel.getShowUrl();
+         final String title = "极客天地VR自生成平台";
+         String describe = "";
+         final String imgUrl = null;
 
-        share(activity,context,view,url,title,describe,imgUrl,homeItemModel);
+        share(activity,context,view,url,title,describe,imgUrl);
     }
 
     private static void getShareData(final View view, final Context context, final Activity activity) {
@@ -162,7 +155,8 @@ public class Common {
         });
     }
 
-    public static void share(final Activity activity, final Context context, View view, final String url, final String title, final String describe, final String imgUrl, final HomeItemModel homeItemModel){
+
+    public static void share(final Activity activity, final Context context, View view, final String url, final String title, final String describe, final String imgUrl){
         final PopupWindow popShare = MyWidget.getPopupWindow(context, view, R.layout.pop_share, false);
         View contentView = popShare.getContentView();
         contentView.findViewById(R.id.pop_back).setOnClickListener(new View.OnClickListener() {
@@ -181,12 +175,7 @@ public class Common {
         contentView.findViewById(R.id.share_wx2).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                if(homeItemModel.getContype() == HomeItemModel.HomeItemModelContentTypeQuestion){
-//                    Common.shareToWXCircle(activity,context, url, title, describe, imgUrl, true);
-//                }else {
-                    Common.shareToWXCircle(activity,context, url, describe, title, imgUrl, true);
-//                }
-//
+                Common.shareToWXCircle(activity,context, url, describe, title, imgUrl, true);
                 popShare.dismiss();
             }
         });

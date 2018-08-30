@@ -1,6 +1,7 @@
 package com.geeksworld.jktdvr.model;
 
 import com.geeksworld.jktdvr.aBase.BaseModel;
+import com.geeksworld.jktdvr.tools.Url;
 
 import java.io.Serializable;
 import java.util.LinkedList;
@@ -19,6 +20,9 @@ imgUrl：图片地址、
 videoUrl：视频地址、
 videoTextarea：视频描述信息、
 type：1图片 2
+browsing：流量量，
+commentNum 评论量，
+dz：点赞
 * */
 public class HomeItemModel extends BaseModel implements Serializable{
     public static final String SerializableKey = "homeItemModel";
@@ -40,6 +44,11 @@ public class HomeItemModel extends BaseModel implements Serializable{
     private String videoUrl;
     private String videoTextarea;
 
+    private String showUrl;
+
+    private int browsing;
+    private int commentNum;
+    private int dz;
 
 
     public void setId(int id) {
@@ -122,5 +131,40 @@ public class HomeItemModel extends BaseModel implements Serializable{
 
     public String getVideoTextarea() {
         return videoTextarea;
+    }
+
+    public void setBrowsing(int browsing) {
+        this.browsing = browsing;
+    }
+
+    public int getBrowsing() {
+        return browsing;
+    }
+
+    public void setCommentNum(int commentNum) {
+        this.commentNum = commentNum;
+    }
+
+    public int getCommentNum() {
+        return commentNum;
+    }
+
+    public void setDz(int dz) {
+        this.dz = dz;
+    }
+
+    public int getDz() {
+        return dz;
+    }
+
+    public String getShowUrl() {
+        String url = Url.BASE_HOST ;
+        if(getType() == HomeItemModel.HomeItemModelContentTypePicture){
+            url = url + "pub/webvrIndex?picUrl=" + getImgUrl() + "&id="+ getId();
+        }else {
+            url = url + "/pub/webvrPlayer?picUrl=" + getVideoUrl()+ "&id="+ getId();
+        }
+        showUrl = url;
+        return showUrl;
     }
 }

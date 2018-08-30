@@ -34,7 +34,7 @@ android {
 
     useLibrary 'org.apache.http.legacy'
 
-    /*
+    ///*
     productFlavors{
         jktd{}
         tengxun{}
@@ -44,9 +44,9 @@ android {
         pugongying{}
         all{}
     }
-    */
+    //*/
 
-/*
+///*
     android.applicationVariants.all { variant ->
         variant.outputs.each { output ->
             def outputFile = output.outputFile
@@ -59,7 +59,7 @@ android {
             }
         }
     }
-    */
+   // */
 }
 
 dependencies {

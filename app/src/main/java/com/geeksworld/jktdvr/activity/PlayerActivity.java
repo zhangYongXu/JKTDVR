@@ -14,6 +14,7 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.geeksworld.jktdvr.model.HomeItemModel;
+import com.geeksworld.jktdvr.tools.Common;
 import com.geeksworld.jktdvr.tools.Utils;
 import com.utovr.player.UVEventListener;
 import com.utovr.player.UVInfoListener;
@@ -31,13 +32,14 @@ public class PlayerActivity extends Activity implements UVPlayerCallBack, VideoC
     private boolean needBufferAnim = true;
     private ImageView imgBuffer;                // 缓冲动画
     private ImageView imgBack;
+    private ImageView imgShare;
     private RelativeLayout rlParent = null;
     protected int CurOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
     private int SmallPlayH = 0;
     private boolean colseDualScreen = true;
 
     private HomeItemModel homeItemModel;
-
+    private  Activity activity;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState)
@@ -54,6 +56,7 @@ public class PlayerActivity extends Activity implements UVPlayerCallBack, VideoC
         mMediaplayer.setToolbar(rlToolbar, null, imgBack);
         mCtrl = new VideoController(rlToolbar, this, true);
         changeOrientation(false);
+        activity = this;
     }
     private void initData(){
         homeItemModel = (HomeItemModel)getIntent().getSerializableExtra(HomeItemModel.SerializableKey);
@@ -148,11 +151,18 @@ public class PlayerActivity extends Activity implements UVPlayerCallBack, VideoC
         rlParent = (RelativeLayout) findViewById(R.id.activity_rlParent);
         imgBuffer = (ImageView) findViewById(R.id.activity_imgBuffer);
         imgBack = (ImageView) findViewById(R.id.activity_imgBack);
+        imgShare = (ImageView) findViewById(R.id.activity_imgShare);
         imgBack.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v)
             {
                 back();
+            }
+        });
+        imgShare.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Common.showPopShare(activity,view,activity,homeItemModel.getShowUrl());
             }
         });
     }
